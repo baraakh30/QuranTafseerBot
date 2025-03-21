@@ -173,7 +173,6 @@ def browse_surah():
     })
 
 
-
 @app.route('/api/query', methods=['POST'])
 def query():
     data = request.json

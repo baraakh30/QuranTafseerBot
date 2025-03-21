@@ -1545,17 +1545,26 @@ document.addEventListener('DOMContentLoaded', function () {
             if (e.target.id === 'expand-chat') {
                 setTimeout(() => {
                     const expandedSourceSelector = document.querySelector('.expanded-container #source-selector');
-                    if (expandedSourceSelector && !expandedSourceSelector.querySelector('#clear-chat-button-expanded')) {
-                        const expandedClearButton = clearButton.cloneNode(true);
-                        expandedClearButton.id = 'clear-chat-button-expanded';
-                        expandedSourceSelector.appendChild(expandedClearButton);
-                        
-                        // Add event listener to the expanded clear button
-                        expandedClearButton.addEventListener('click', clearChat);
+                    if (expandedSourceSelector) {
+                        // Remove the clear button if it was cloned with the source selector
+                        const existingClearButton = expandedSourceSelector.querySelector('#clear-chat-button');
+                        if (existingClearButton) {
+                            existingClearButton.remove();
+                        }
+                        // Only add the expanded clear button if it doesn't already exist
+                        if (!expandedSourceSelector.querySelector('#clear-chat-button-expanded')) {
+                            const expandedClearButton = clearButton.cloneNode(true);
+                            expandedClearButton.id = 'clear-chat-button-expanded';
+                            expandedSourceSelector.appendChild(expandedClearButton);
+                            
+                            // Add event listener to the expanded clear button
+                            expandedClearButton.addEventListener('click', clearChat);
+                        }
                     }
                 }, 100);
             }
         });
+        
         
         // Add click handler to clear the chat
         clearButton.addEventListener('click', clearChat);

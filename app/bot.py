@@ -257,7 +257,7 @@ class TafsirChatbot:
         
         # If no results after filtering, return early
         if len(score_df) == 0:
-            return "لم أجد أي تفسير مناسب لسؤالك. حاول السؤال عن آية محددة (مثل ٢:٢٥٥) أو أعد صياغة سؤالك."
+            return "لم أجد أي تفسير مناسب لسؤالك. حاول السؤال عن آية محددة (مثل 2:255) أو أعد صياغة سؤالك."
         
         # Check if any result has a high confidence score (>= 0.7)
         high_confidence_results = score_df[score_df['score'] >= 0.7]
