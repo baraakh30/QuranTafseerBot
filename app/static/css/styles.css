@@ -144,7 +144,7 @@ header:after {
 }
 
 .chat-container.expanded {
-    height: calc(100vh - 220px);
+    height: calc(70vh - 220px);
     animation: expandHeight 0.4s ease;
 }
 #user-input {
@@ -505,7 +505,7 @@ button:focus::after {
 }
 
 .verses-container.expanded {
-    max-height: calc(100vh - 200px);
+    max-height: calc(70vh - 200px);
 }
 
 .verse-card {
