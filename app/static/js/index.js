@@ -1329,6 +1329,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             document.getElementById('mobile-sources-btn').addEventListener('click', () => {
                 userInput.value = "المصادر";
+                document.querySelector('.chat-container-wrapper').scrollIntoView({behavior: 'smooth'});
                 sendMessage();
             });
             
@@ -1528,7 +1529,54 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     optimizeMobilePerformance();
-
+    function addClearChatButton() {
+        // Create the clear button
+        const clearButton = document.createElement('button');
+        clearButton.id = 'clear-chat-button';
+        clearButton.className = 'clear-chat-button';
+        clearButton.innerHTML = '<span class="clear-icon">🗑️</span><span class="clear-text">مسح المحادثة</span>';
+        
+        // Add the button next to the source selector
+        const sourceSelector = document.getElementById('source-selector');
+        sourceSelector.appendChild(clearButton);
+        
+        // Also add it to the expanded view when active
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'expand-chat') {
+                setTimeout(() => {
+                    const expandedSourceSelector = document.querySelector('.expanded-container #source-selector');
+                    if (expandedSourceSelector && !expandedSourceSelector.querySelector('#clear-chat-button-expanded')) {
+                        const expandedClearButton = clearButton.cloneNode(true);
+                        expandedClearButton.id = 'clear-chat-button-expanded';
+                        expandedSourceSelector.appendChild(expandedClearButton);
+                        
+                        // Add event listener to the expanded clear button
+                        expandedClearButton.addEventListener('click', clearChat);
+                    }
+                }, 100);
+            }
+        });
+        
+        // Add click handler to clear the chat
+        clearButton.addEventListener('click', clearChat);
+        
+        // Function to clear chat and add welcome message
+        function clearChat() {
+            // Get chat containers (both normal and expanded view)
+            const chatContainer = document.getElementById('chat-container');
+            
+            // Clear all messages
+            chatContainer.innerHTML = '';
+            
+            // Add welcome message
+            addBotMessage("السلام عليكم! أنا بوت التفسير. اسألني عن أي آية من القرآن الكريم وسأقدم لك تفسيرها. يمكنك تحديد سورة وآية مثل (2:255) أو البحث بالنص.");
+            
+            // Scroll to bottom
+            scrollChatToBottom();
+        }
+    }
+    
+    addClearChatButton();
 
 });
 

@@ -1,5 +1,9 @@
-/* Updated modern styling with animations */
-body {
+/* Updated modern styling with animations - Optimized version */
+
+/* ============================
+   BASE STYLES
+   ============================ */
+   body {
     font-family: 'Amiri', serif;
     background-color: #f8f9fa;
     margin: 0;
@@ -8,6 +12,23 @@ body {
     transition: background-color 0.5s ease;
 }
 
+/* ============================
+   TYPOGRAPHY
+   ============================ */
+h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    font-size: 1.1em;
+}
+
+/* ============================
+   LAYOUT COMPONENTS
+   ============================ */
 .container {
     max-width: 900px;
     margin: 40px auto;
@@ -43,17 +64,9 @@ header:after {
     border-radius: 3px;
 }
 
-h1 {
-    color: #2c3e50;
-    margin-bottom: 10px;
-    transition: color 0.3s ease;
-}
-
-.subtitle {
-    color: #7f8c8d;
-    font-size: 1.1em;
-}
-
+/* ============================
+   CHAT COMPONENTS
+   ============================ */
 .chat-container {
     height: 400px;
     overflow-y: auto;
@@ -77,17 +90,6 @@ h1 {
     animation: messageAppear 0.3s ease-out forwards;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-@keyframes messageAppear {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .chat-message:hover {
@@ -136,6 +138,97 @@ h1 {
     border-bottom: 0;
 }
 
+.chat-container-wrapper {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.chat-container.expanded {
+    height: calc(100vh - 220px);
+    animation: expandHeight 0.4s ease;
+}
+#user-input {
+    flex: 1;
+    margin-right: 10px;
+    font-family: 'Amiri', serif;
+    padding: 12px 18px;
+    font-size: 1em;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+    color: #333;
+    direction: rtl;
+    text-align: right;
+}
+
+#user-input:hover {
+    border-color: #27ae60;
+}
+
+#user-input:focus {
+    outline: none;
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2), inset 0 2px 5px rgba(0,0,0,0.02);
+}
+
+/* Placeholder text style */
+#user-input::placeholder {
+    color: #aaa;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+#user-input:focus::placeholder {
+    opacity: 0.5;
+}
+
+/* Show clear button when input has content */
+#user-input:not(:placeholder-shown) {
+    padding-left: 35px; /* Space for clear button */
+}
+/* Clear input button */
+.clear-input {
+    position: absolute;
+    left: 12px; /* RTL layout positioning - left side */
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: none;
+    font-size: 18px;
+    transition: color 0.2s ease;
+}
+
+.clear-input:hover {
+    color: #e74c3c;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+#user-input:not(:placeholder-shown) ~ .clear-input {
+    display: block;
+}
+
+/* Override existing input styles to avoid conflicts */
+.input-group input {
+    margin-right: 10px;
+    width: auto;
+}
+/* ============================
+   FORM ELEMENTS
+   ============================ */
 .input-group {
     display: flex;
     margin-bottom: 15px;
@@ -205,6 +298,11 @@ button:active {
     box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3);
 }
 
+/* Add active state animations to input elements */
+input:active, select:active, button:active {
+    transform: scale(0.98);
+}
+
 button::after {
     content: '';
     position: absolute;
@@ -223,17 +321,26 @@ button:focus::after {
     animation: ripple 1s ease-out;
 }
 
-@keyframes ripple {
-    0% {
-        transform: scale(0, 0);
-        opacity: 0.5;
-    }
-    100% {
-        transform: scale(100, 100);
-        opacity: 0;
-    }
+/* Clear Chat Button */
+
+.clear-chat-button:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
+    border-color: #e74c3c;
 }
 
+.clear-chat-button:active {
+    transform: scale(0.95);
+}
+
+.clear-icon {
+    margin-left: 5px;
+    font-size: 16px;
+}
+
+/* ============================
+   VERSE DISPLAY COMPONENTS
+   ============================ */
 .verse-id {
     font-weight: bold;
     color: #3498db;
@@ -249,26 +356,6 @@ button:focus::after {
     border-radius: 6px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     animation: slideIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
 }
 
 .tafseer-source {
@@ -290,43 +377,48 @@ button:focus::after {
     animation: expandWidth 0.5s ease;
 }
 
-@keyframes expandWidth {
-    from {
-        width: 0;
-    }
-    to {
-        width: 100%;
-    }
+/* Highlight animation for selected verse */
+.verse-highlight {
+    animation: verse-highlight-pulse 1.5s ease-in-out;
 }
 
-.loading {
-    text-align: center;
-    margin: 20px 0;
-    color: #7f8c8d;
+/* Collapsible tafseer text */
+.collapsible-tafseer {
     position: relative;
-    padding-left: 40px;
+    max-height: 200px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
 }
 
-.loading:before {
-    content: '';
+.collapsible-tafseer.expanded {
+    max-height: none;
+}
+
+.collapsible-tafseer .read-more {
     position: absolute;
-    left: 0;
-    top: 50%;
-    width: 30px;
-    height: 30px;
-    margin-top: -15px;
-    border-radius: 50%;
-    border: 3px solid rgba(39, 174, 96, 0.2);
-    border-top-color: #27ae60;
-    animation: spin 1s linear infinite;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(to left, white 40%, transparent);
+    width: 100%;
+    text-align: center;
+    padding: 30px 0 5px 0;
+    cursor: pointer;
+    color: #27ae60;
+    font-weight: bold;
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+.zoomed {
+    transition: font-size 0.3s ease;
+    background-color: rgba(245, 245, 245, 0.95);
+    padding: 20px !important;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin: 10px 0;
 }
 
+/* ============================
+   BROWSE AND SURAH COMPONENTS
+   ============================ */
 .browse-container {
     margin-top: 30px;
     border-top: 1px solid #eaeaea;
@@ -360,17 +452,6 @@ button:focus::after {
     transition: all 0.3s ease;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 .surah-header {
     display: flex;
     justify-content: space-between;
@@ -380,6 +461,14 @@ button:focus::after {
     border-bottom: 1px solid #eaeaea;
 }
 
+.browse-container-wrapper {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* ============================
+   PAGINATION
+   ============================ */
 .pagination {
     display: flex;
     align-items: center;
@@ -404,24 +493,19 @@ button:focus::after {
     animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.7;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
+/* ============================
+   VERSES BROWSER
+   ============================ */
 .verses-container {
     max-height: 500px;
     overflow-y: auto;
     padding: 10px;
     scroll-behavior: smooth;
     border-radius: 8px;
+}
+
+.verses-container.expanded {
+    max-height: calc(100vh - 200px);
 }
 
 .verse-card {
@@ -434,6 +518,7 @@ button:focus::after {
     animation: fadeInUp 0.5s ease;
     transform: translateZ(0);
     backface-visibility: hidden;
+    scroll-margin-top: 60px;
 }
 
 .verse-card:hover {
@@ -441,6 +526,9 @@ button:focus::after {
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
+/* ============================
+   EXPANSION CONTROLS
+   ============================ */
 /* Expand button styles */
 .expand-button {
     position: absolute;
@@ -482,40 +570,6 @@ button:focus::after {
     animation: expandView 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-@keyframes expandView {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.chat-container-wrapper, .browse-container-wrapper {
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.chat-container.expanded {
-    height: calc(100vh - 220px);
-    animation: expandHeight 0.4s ease;
-}
-
-@keyframes expandHeight {
-    from {
-        height: 400px;
-    }
-    to {
-        height: calc(100vh - 220px);
-    }
-}
-
-.verses-container.expanded {
-    max-height: calc(100vh - 200px);
-}
-
 .close-expanded {
     position: absolute;
     top: 20px;
@@ -552,17 +606,6 @@ button:focus::after {
     transform: translateZ(0);
 }
 
-@keyframes slideInUp {
-    from {
-        transform: translateY(30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
 .browse-layout-expanded {
     display: grid;
     grid-template-columns: 220px 1fr;
@@ -588,17 +631,6 @@ button:focus::after {
     animation: fadeInRight 0.4s ease;
 }
 
-@keyframes fadeInRight {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
 .surah-selector.expanded label {
     margin-bottom: 10px;
     margin-left: 0;
@@ -610,81 +642,9 @@ button:focus::after {
     margin-left: 0;
 }
 
-/* Add active state animations to input elements */
-input:active, select:active, button:active {
-    transform: scale(0.98);
-}
-
-/* Suggestion links styling */
-#suggestions {
-    margin-top: 20px;
-    text-align: center;
-    padding: 15px;
-    border-top: 1px solid #eaeaea;
-}
-
-.suggestion {
-    display: inline-block;
-    text-decoration: none;
-    color: #3498db;
-    margin: 0 10px;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.suggestion:after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    display: block;
-    right: 0;
-    background: #3498db;
-    transition: width 0.3s ease;
-    bottom: -3px;
-}
-
-.suggestion:hover:after {
-    width: 100%;
-    left: 0;
-    right: auto;
-}
-
-.suggestion:hover {
-    color: #2980b9;
-    transform: translateY(-2px);
-}
-
-/* Theme transition effect */
-@media (prefers-reduced-motion: no-preference) {
-    * {
-        transition-duration: 0.3s;
-        transition-property: background-color, border-color, box-shadow, color, opacity, transform;
-        transition-timing-function: ease;
-    }
-}
-
-/* Add scroll animations for the verses container */
-.verses-container::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.verses-container::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.03);
-    border-radius: 4px;
-}
-
-.verses-container::-webkit-scrollbar-thumb {
-    background: rgba(39, 174, 96, 0.3);
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-.verses-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(39, 174, 96, 0.5);
-}
-/* Ayah Navigation Bar */
+/* ============================
+   AYAH NAVIGATION BAR
+   ============================ */
 .ayah-nav-bar {
     position: sticky;
     top: 0;
@@ -711,7 +671,6 @@ input:active, select:active, button:active {
     display: none;
 }
 
-/* Ayah Navigation Buttons */
 .ayah-nav-button {
     min-width: 32px;
     height: 32px;
@@ -753,7 +712,6 @@ input:active, select:active, button:active {
     opacity: 0.8;
 }
 
-/* Section labels */
 .ayah-nav-section {
     display: flex;
     align-items: center;
@@ -765,7 +723,6 @@ input:active, select:active, button:active {
     margin-right: 5px;
 }
 
-/* Ayah jump container */
 .ayah-jump-container {
     display: flex;
     align-items: center;
@@ -796,493 +753,73 @@ input:active, select:active, button:active {
     font-size: 12px;
 }
 
-/* Highlight animation for selected verse */
-.verse-highlight {
-    animation: verse-highlight-pulse 1.5s ease-in-out;
-}
-
-@keyframes verse-highlight-pulse {
-    0% { background-color: transparent; }
-    20% { background-color: rgba(26, 115, 232, 0.15); }
-    80% { background-color: rgba(26, 115, 232, 0.15); }
-    100% { background-color: transparent; }
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-    .ayah-nav-bar {
-        padding: 6px 10px;
-        border-radius: 20px;
-        flex-wrap: wrap;
-    }
-    
-    .ayah-nav-button {
-        min-width: 28px;
-        height: 28px;
-        font-size: 12px;
-        margin: 0 2px;
-    }
-    
-    .ayah-nav-section {
-        width: 100%;
-        justify-content: center;
-        margin-bottom: 5px;
-    }
-    
-    .ayah-jump-container {
-        width: 100%;
-        justify-content: center;
-        margin: 8px 0;
-    }
-}
-
-/* In expanded view - make it more prominent */
-#surah-browser-expanded .ayah-nav-bar {
-    position: sticky;
-    top: 10px;
-    max-width: 90%;
-    padding: 10px 15px;
-    border-radius: 30px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-/* Fix expanded view layout */
-.browse-layout-expanded {
-    display: flex;
-    flex-direction: column !important; /* Override any row display */
-    width: 100%;
-    max-width: 100%;
-}
-
-.browse-layout-expanded .browse-sidebar {
-    width: 100% !important;
-    margin-bottom: 20px;
-}
-
-.browse-layout-expanded .browse-content {
-    width: 100% !important;
-}
-
-/* Improve verse card display for mobile */
-.verse-card {
-    scroll-margin-top: 60px; /* Provides space for the nav bar when scrolling to a verse */
-}
-
-/* Adjust verse card layout in expanded grid view */
-.verse-cards-grid .verse-card {
-    scroll-margin-top: 80px;
-}
-
-.verse-cards-grid {
-    display: block !important; /* Override any grid display */
-    width: 100%;
-}
-
-/* Add these to your styles.css file */
-
-/* Mobile-specific enhancements */
-@media (max-width: 768px) {
-    /* Container adjustments */
-    .container {
-      margin: 15px auto;
-      padding: 15px;
-      width: 95%;
-      max-width: 100%;
-      border-radius: 12px;
-    }
-    
-    /* Header adjustments */
-    header h1 {
-      font-size: 1.5rem;
-    }
-    
-    .subtitle {
-      font-size: 0.9rem;
-    }
-    
-    /* Input controls */
-    .input-group {
-      flex-direction: column;
-      gap: 10px;
-    }
-    
-    .input-group input {
-      width: 100%;
-      margin-right: 0;
-      margin-bottom: 10px;
-    }
-    
-    .input-group button {
-      width: 100%;
-    }
-    
-    /* Source selector */
-    #source-selector {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-    }
-    
-    #source-selector select {
-      width: 100%;
-      margin: 5px 0;
-    }
-    
-    /* Chat container */
-    .chat-container {
-      height: 350px;
-    }
-    
-    .chat-message {
-      max-width: 90%;
-      padding: 10px 12px;
-      font-size: 0.95rem;
-    }
-    
-    /* Browse container */
-    .surah-selector {
-      flex-direction: column;
-      gap: 10px;
-    }
-    
-    .surah-selector label {
-      margin-left: 0;
-      margin-bottom: 5px;
-    }
-    
-    .surah-selector select {
-      margin: 0 0 10px 0;
-    }
-    
-    .surah-selector button {
-      width: 100%;
-    }
-    
-    /* Surah browser */
-    .surah-header {
-      flex-direction: column;
-      gap: 10px;
-    }
-    
-    .pagination {
-      width: 100%;
-      justify-content: space-between;
-    }
-    
-    /* Verse cards */
-    .verse-card {
-      padding: 15px;
-    }
-    
-    /* Expanded view fixes */
-    .expanded-container {
-      padding: 15px;
-      margin: 10px;
-    }
-    
-    /* Fix for the expanded button position */
-    .expand-button {
-      top: 5px;
-      right: 5px;
-      width: 30px;
-      height: 30px;
-      line-height: 26px;
-      font-size: 16px;
-    }
-  }
-  
-  /* Touch-friendly button sizes */
-  @media (max-width: 768px) {
-    button, select, input {
-      min-height: 44px; /* Apple's recommended touch target size */
-    }
-    
-    .ayah-nav-button {
-      min-width: 36px;
-      height: 36px;
-    }
-  }
-
-  /* Mobile-specific styles for better touch experience */
-@media (max-width: 768px) {
-    /* Prevent scroll on body when expanded view is active */
-    body.no-scroll {
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
-      height: 100%;
-    }
-    
-    /* More spacing between elements for easier touch */
-    .verse-id, .tafseer-source {
-      padding: 8px 0;
-    }
-    
-    /* Better expanded view for mobile */
-    .expanded-view {
-      padding: 10px;
-    }
-    
-    .expanded-container {
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-      max-height: calc(100vh - 30px);
-      overflow-y: auto;
-    }
-    
-    /* Improve layout for browse-layout-expanded */
-    .browse-layout-expanded {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .browse-sidebar {
-      margin-bottom: 15px;
-    }
-    
-    /* Better touch targets for scroll indication */
-    .verses-container::after {
-      content: '';
-      display: block;
-      width: 40px;
-      height: 5px;
-      background: rgba(0,0,0,0.1);
-      border-radius: 3px;
-      margin: 10px auto;
-    }
-    
-    /* Bottom navigation for mobile */
-    .mobile-bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-      z-index: 100;
-      border-top: 1px solid #eee;
-    }
-    
-    .mobile-bottom-nav button {
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: #27ae60;
-    }
-    
-    /* Add padding to bottom of page to account for bottom nav */
-    .container {
-      padding-bottom: 60px;
-    }
-    
-    /* Mobile ayah navigation improvements */
-    .ayah-nav-bar {
-      position: sticky;
-      top: 0;
-      padding: 5px;
-      z-index: 10;
-      background-color: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-    }
-    
-    /* Mobile-specific verse card modifications */
-    .verse-card .verse-text {
-      font-size: 1.1em;
-      line-height: 1.7;
-    }
-    
-    /* Long text handling for mobile */
-    .mobile-tafseer {
-      position: relative;
-      max-height: 150px;
-      overflow: hidden;
-    }
-    
-    .mobile-tafseer.expanded {
-      max-height: none;
-    }
-    
-    .mobile-tafseer::after {
-      content: 'المزيد...';
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      background: linear-gradient(to left, white 50%, transparent);
-      padding: 5px 10px;
-      color: #27ae60;
-      font-weight: bold;
-    }
-    
-    .mobile-tafseer.expanded::after {
-      content: 'عرض أقل';
-    }
-  }
-
-  /* Font size adjustments for mobile */
-@media (max-width: 768px) {
-    .verse-text {
-        font-size: 1.2em;
-        line-height: 1.8;
-        padding: 15px;
-    }
-    
-    .tafseer-text {
-        font-size: 1.1em;
-        line-height: 1.7;
-    }
-    
-    /* Make headers more compact */
-    header {
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-    }
-    
-    /* Better spacing for mobile touch */
-    .chat-message {
-        padding: 15px;
-        margin-bottom: 20px;
-    }
-}
-
-/* Add a collapsible tafseer text for mobile */
-.collapsible-tafseer {
-    position: relative;
-    max-height: 200px;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-}
-
-.collapsible-tafseer.expanded {
-    max-height: none;
-}
-
-.collapsible-tafseer .read-more {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: linear-gradient(to left, white 40%, transparent);
-    width: 100%;
+/* ============================
+   LOADING STATES
+   ============================ */
+.loading {
     text-align: center;
-    padding: 30px 0 5px 0;
-    cursor: pointer;
-    color: #27ae60;
-    font-weight: bold;
+    margin: 20px 0;
+    color: #7f8c8d;
+    position: relative;
+    padding-left: 40px;
 }
 
-.zoomed {
-    transition: font-size 0.3s ease;
-    background-color: rgba(245, 245, 245, 0.95);
-    padding: 20px !important;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    margin: 10px 0;
+.loading:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    margin-top: -15px;
+    border-radius: 50%;
+    border: 3px solid rgba(39, 174, 96, 0.2);
+    border-top-color: #27ae60;
+    animation: spin 1s linear infinite;
 }
 
-/* Mobile loading state improvement */
-@media (max-width: 768px) {
-    .loading {
-        margin: 30px auto;
-        text-align: center;
-        padding-left: 0;
-        padding-top: 40px;
-    }
-    
-    .loading:before {
-        left: 50%;
-        margin-left: -15px;
-    }
-    
-    /* Add pull-to-refresh indicator */
-    .verses-container:before {
-        content: '⟳ اسحب للتحديث';
-        display: block;
-        text-align: center;
-        padding: 10px;
-        color: #999;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-    
-    .verses-container.pulling:before {
-        opacity: 1;
-    }
+/* ============================
+   SUGGESTION COMPONENTS
+   ============================ */
+#suggestions {
+    margin-top: 20px;
+    text-align: center;
+    padding: 15px;
+    border-top: 1px solid #eaeaea;
 }
 
-@media (max-width: 768px) {
-    /* Improved buttons for touch */
-    button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 12px 20px;
-        transition: transform 0.2s ease, background-color 0.3s ease;
-    }
-    
-    button:active {
-        transform: scale(0.95);
-    }
-    
-    #send-button {
-        min-width: 80px;
-    }
-    
-    .button-text {
-        display: none;
-    }
-    
-    .button-icon {
-        display: block;
-        font-size: 1.2em;
-    }
-    
-    /* Better tab highlighting */
-    input:focus, button:focus, select:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.3);
-    }
-    
-    /* Mobile bottom navigation */
-    .mobile-bottom-nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        background: white;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-        z-index: 1000;
-        padding: 10px 0;
-    }
-    
-    .mobile-bottom-nav button {
-        background: none;
-        border: none;
-        font-size: 20px;
-        padding: 10px;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .mobile-bottom-nav button:active {
-        background-color: rgba(39, 174, 96, 0.2);
-    }
-    
-    /* Add padding to bottom to account for nav bar */
-    body {
-        padding-bottom: 70px;
-    }
+.suggestion {
+    display: inline-block;
+    text-decoration: none;
+    color: #3498db;
+    margin: 0 10px;
+    transition: all 0.3s ease;
+    position: relative;
 }
+
+.suggestion:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    right: 0;
+    background: #3498db;
+    transition: width 0.3s ease;
+    bottom: -3px;
+}
+
+.suggestion:hover:after {
+    width: 100%;
+    left: 0;
+    right: auto;
+}
+
+.suggestion:hover {
+    color: #2980b9;
+    transform: translateY(-2px);
+}
+
 .quick-suggestions {
     display: none;
     overflow-x: auto;
@@ -1310,8 +847,572 @@ input:active, select:active, button:active {
     transform: scale(0.95);
 }
 
+/* ============================
+   ANIMATIONS
+   ============================ */
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(100, 100);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes expandWidth {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes expandView {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes expandHeight {
+    from {
+        height: 400px;
+    }
+    to {
+        height: calc(100vh - 220px);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes verse-highlight-pulse {
+    0% { background-color: transparent; }
+    20% { background-color: rgba(26, 115, 232, 0.15); }
+    80% { background-color: rgba(26, 115, 232, 0.15); }
+    100% { background-color: transparent; }
+}
+
+@keyframes clearFade {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.8); }
+}
+
+.clearing {
+    animation: clearFade 0.3s ease forwards;
+}
+
+/* ============================
+   SCROLLBAR STYLING
+   ============================ */
+.verses-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.verses-container::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.03);
+    border-radius: 4px;
+}
+
+.verses-container::-webkit-scrollbar-thumb {
+    background: rgba(39, 174, 96, 0.3);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.verses-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(39, 174, 96, 0.5);
+}
+
+/* ============================
+   MEDIA QUERIES
+   ============================ */
+
+/* Medium screens (tablets) */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 95%;
+        margin: 30px auto;
+    }
+    
+    .browse-layout-expanded {
+        grid-template-columns: 180px 1fr;
+        gap: 20px;
+    }
+    
+    .verse-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Small screens (mobile devices) */
 @media (max-width: 768px) {
+    /* General layout tweaks */
+    .container {
+        margin: 15px auto;
+        padding: 15px;
+        width: 95%;
+        max-width: 100%;
+        border-radius: 12px;
+    }
+    
+    body.no-scroll {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+    }
+    
+    /* Form controls */
+    .input-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .input-group input {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .input-group button {
+        width: 100%;
+    }
+    
+    button, select, input {
+        min-height: 44px; /* Apple's recommended touch target size */
+    }
+    
+    #send-button {
+        min-width: 80px;
+    }
+    
+    .button-text {
+        display: none;
+    }
+    
+    .button-icon {
+        display: block;
+        font-size: 1.2em;
+    }
+    
+    input:focus, button:focus, select:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.3);
+    }
+    
+    #user-input {
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 12px 15px;
+        height: 44px;
+        border-radius: 22px;
+        box-shadow: none;
+        margin-bottom: 0;
+    }
+    
+    .input-group {
+        flex-direction: row;
+        gap: 0;
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 30px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
+    .input-group input {
+        width: auto;
+        margin-bottom: 0;
+        flex: 1;
+    }
+    
+    .input-group button {
+        width: auto;
+        min-width: 44px;
+        height: 44px;
+        border-radius: 22px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .button-text {
+        display: none;
+    }
+    
+    .button-icon {
+        display: block;
+        font-size: 18px;
+    }
+    
+    /* Visible outline for accessibility */
+    #user-input:focus {
+        box-shadow: 0 0 0 2px #27ae60;
+    }
+    
+    /* Improve tap target size */
+    .clear-input {
+        width: 30px;
+        height: 30px;
+        left: 12px;
+    }
+    
+    /* Safe area for notched devices */
+    .container {
+        padding-left: max(15px, env(safe-area-inset-left));
+        padding-right: max(15px, env(safe-area-inset-right));
+    }
+    /* Source selector */
+    #source-selector {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #source-selector select {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    /* Chat container */
+    .chat-container {
+        height: 350px;
+    }
+
+    .chat-message {
+        max-width: 90%;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+    }
+    
+    .clear-chat-button {
+        padding: 4px 10px;
+        margin-right: 8px;
+    }
+    
+    .clear-text {
+        font-size: 12px;
+    }
+    
+    /* Enable quick suggestions */
     .quick-suggestions {
         display: block;
+    }
+    
+    /* Surah selector */
+    .surah-selector {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .surah-selector label {
+        margin-left: 0;
+        margin-bottom: 5px;
+    }
+
+    .surah-selector select {
+        margin: 0 0 10px 0;
+    }
+
+    .surah-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    /* Pagination */
+    .pagination {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    /* Ayah navigation */
+    .ayah-nav-bar {
+        padding: 6px 10px;
+        border-radius: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .ayah-nav-button {
+        min-width: 36px;
+        height: 36px;
+    }
+    
+    .ayah-nav-section {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 5px;
+    }
+    
+    .ayah-jump-container {
+        width: 100%;
+        justify-content: center;
+        margin: 8px 0;
+    }
+    
+    /* Verse cards */
+    .verse-card {
+        padding: 15px;
+    }
+    
+    .verse-text {
+        font-size: 1.2em;
+        line-height: 1.8;
+        padding: 15px;
+    }
+
+    .tafseer-text {
+        font-size: 1.1em;
+        line-height: 1.7;
+    }
+    
+    /* Loading state */
+    .loading {
+        margin: 30px auto;
+        text-align: center;
+        padding-left: 0;
+        padding-top: 40px;
+    }
+
+    .loading:before {
+        left: 50%;
+        margin-left: -15px;
+    }
+    
+    /* Expanded view */
+    .expanded-container {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .expanded-container #source-selector {
+        padding: 10px 0;
+    }
+    
+    .expanded-container .clear-chat-button {
+        margin-right: 0;
+        margin-top: 8px;
+    }
+
+    .expand-button {
+        top: 5px;
+        right: 5px;
+        width: 30px;
+        height: 30px;
+        line-height: 26px;
+        font-size: 16px;
+    }
+    
+    /* Fix expanded view layout */
+    .browse-layout-expanded {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .verse-cards-grid {
+        display: block;
+    }
+    
+    /* Add pull-to-refresh indicator */
+    .verses-container:before {
+        content: '⟳ اسحب للتحديث';
+        display: block;
+        text-align: center;
+        padding: 10px;
+        color: #999;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .verses-container.pulling:before {
+        opacity: 1;
+    }
+    
+    /* Mobile bottom navigation */
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 100;
+        border-top: 1px solid #eee;
+    }
+    
+    .mobile-bottom-nav button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #27ae60;
+    }
+    
+    /* Add padding to bottom to account for bottom nav */
+    .container {
+        padding-bottom: 60px;
+    }
+    
+    body {
+        padding-bottom: 70px;
+    }
+    .input-group {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background-color: #f9f9f9;
+        padding: 8px;
+        border-radius: 30px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
+    #user-input {
+        height: 44px;
+        margin: 0;
+        border-radius: 22px;
+        font-size: 16px;
+        flex: 1;
+    }
+    
+    #send-button {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 50%;
+        margin: 0 4px 0 8px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3);
+    }
+    
+    .button-icon {
+        display: inline-flex;
+        font-size: 16px;
+    }
+    
+    /* Ensure the clear button is properly positioned */
+    .clear-input {
+        width: 30px;
+        height: 30px;
+        left: 15px;
+        top: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Prevent any margin issues */
+    .input-group input,
+    .input-group button {
+        margin-bottom: 0;
+    }
+}
+
+/* Theme transition effect */
+@media (prefers-reduced-motion: no-preference) {
+    * {
+        transition-duration: 0.3s;
+        transition-property: background-color, border-color, box-shadow, color, opacity, transform;
+        transition-timing-function: ease;
     }
 }
