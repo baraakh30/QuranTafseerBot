@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوت تفسير القرآن الكريم</title>
+    <link rel="icon" href="/static/images/icon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>بوت تفسير القرآن الكريم</h1>
+            <p class="subtitle">اسأل عن أي آية من القرآن الكريم وسأقدم لك تفسيرها</p>
+        </header>
+        
+        <div id="source-selector">
+            <label for="tafseer-source">اختر مصدر التفسير:</label>
+            <select id="tafseer-source">
+                <option value="">كل المصادر</option>
+                {% for source in sources %}
+                <option value="{{ source }}">{{ source }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="chat-container-wrapper">
+            <div class="expand-button" id="expand-chat">⤢</div>
+            <div id="chat-container" class="chat-container"></div>
+        </div>        
+        <div class="input-group">
+            <input type="text" id="user-input" placeholder="اكتب سؤالك أو رقم الآية (مثل 2:255)..." />
+            <button id="send-button">إرسال</button>
+        </div>
+        <div class="browse-container-wrapper">
+            <div class="expand-button" id="expand-browse">⤢</div>
+            <div class="browse-container">
+                <h3>تصفح سور القرآن</h3>
+                <div class="surah-selector">
+                    <label for="surah-select">اختر السورة:</label>
+                    <select id="surah-select">
+                        <option value="">اختر سورة...</option>
+                        {% for id, surah in quran_suras.items() %}
+                        <option value="{{ id }}">{{ id }}. {{ surah.arabic }} ({{ surah.english }})</option>
+                        {% endfor %}
+                    </select>
+                    <button id="browse-button">تصفح</button>
+                </div>
+                
+                <div id="surah-browser" class="surah-browser" style="display: none;">
+                    <div class="surah-header">
+                        <h3 id="surah-title"></h3>
+                        <div class="pagination">
+                            <button id="prev-page" disabled>السابق</button>
+                            <span id="page-info"></span>
+                            <button id="next-page">التالي</button>
+                        </div>
+                    </div>
+                    <div id="verses-container" class="verses-container"></div>
+                </div>
+            </div>
+        </div>
+        
+        <p id="suggestions">
+            <strong>اقتراحات:</strong>
+            <a href="#" class="suggestion" data-query="1:1">تفسير الفاتحة</a> |
+            <a href="#" class="suggestion" data-query="2:255">تفسير آية الكرسي</a> |
+            <a href="#" class="suggestion" data-query="المصادر">عرض مصادر التفسير</a>
+        </p>
+    </div>
+
+    <script src="/static/js/index.js"></script>
+
+</body>
+</html>

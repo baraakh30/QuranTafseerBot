@@ -1,0 +1,686 @@
+/* Updated modern styling with animations */
+body {
+    font-family: 'Amiri', serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    transition: background-color 0.5s ease;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    transform: translateY(-3px);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+header:after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, #27ae60, #2ecc71);
+    border-radius: 3px;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    font-size: 1.1em;
+}
+
+.chat-container {
+    height: 400px;
+    overflow-y: auto;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+    scroll-behavior: smooth;
+}
+
+.chat-message {
+    margin-bottom: 15px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    max-width: 80%;
+    line-height: 1.5;
+    transform-origin: bottom;
+    animation: messageAppear 0.3s ease-out forwards;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-message:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.user-message {
+    background-color: #dcf8c6;
+    margin-left: auto;
+    border-bottom-right-radius: 3px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    position: relative;
+}
+
+.user-message::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-left-color: #dcf8c6;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.bot-message {
+    background-color: #fff;
+    border-bottom-left-radius: 3px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative;
+}
+
+.bot-message::after {
+    content: '';
+    position: absolute;
+    left: -8px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-right-color: #fff;
+    border-left: 0;
+    border-bottom: 0;
+}
+
+.input-group {
+    display: flex;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+#source-selector {
+    margin-bottom: 20px;
+    transition: opacity 0.3s ease;
+}
+
+select, input, button {
+    font-family: 'Amiri', serif;
+    padding: 12px 18px;
+    font-size: 1em;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+select {
+    margin-right: 10px;
+    background-color: #fff;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 15px;
+    padding-right: 40px;
+}
+
+select:hover, input:hover {
+    border-color: #27ae60;
+}
+
+select:focus, input:focus {
+    outline: none;
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+}
+
+input {
+    flex: 1;
+    margin-right: 10px;
+}
+
+button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+button:hover {
+    background-color: #2ecc71;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3);
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+button:focus::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(100, 100);
+        opacity: 0;
+    }
+}
+
+.verse-id {
+    font-weight: bold;
+    color: #3498db;
+    animation: fadeIn 0.5s ease;
+}
+
+.verse-text {
+    font-style: italic;
+    margin: 10px 0;
+    padding: 10px 15px;
+    border-right: 3px solid #3498db;
+    background-color: #ecf0f1;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tafseer-source {
+    font-weight: bold;
+    color: #8e44ad;
+    margin-top: 10px;
+    animation: fadeIn 0.5s ease 0.1s both;
+}
+
+.tafseer-text {
+    margin-top: 5px;
+    line-height: 1.6;
+    animation: fadeIn 0.5s ease 0.2s both;
+}
+
+.separator {
+    margin: 15px 0;
+    border-bottom: 1px dashed #ccc;
+    animation: expandWidth 0.5s ease;
+}
+
+@keyframes expandWidth {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.loading {
+    text-align: center;
+    margin: 20px 0;
+    color: #7f8c8d;
+    position: relative;
+    padding-left: 40px;
+}
+
+.loading:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    margin-top: -15px;
+    border-radius: 50%;
+    border: 3px solid rgba(39, 174, 96, 0.2);
+    border-top-color: #27ae60;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.browse-container {
+    margin-top: 30px;
+    border-top: 1px solid #eaeaea;
+    padding-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.surah-selector {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.surah-selector label {
+    margin-left: 10px;
+}
+
+.surah-selector select {
+    flex: 1;
+    margin-left: 10px;
+}
+
+.surah-browser {
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    animation: fadeInUp 0.5s ease;
+    transition: all 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.surah-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.pagination button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.pagination span {
+    margin: 0 10px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.verses-container {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 10px;
+    scroll-behavior: smooth;
+    border-radius: 8px;
+}
+
+.verse-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.5s ease;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.verse-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* Expand button styles */
+.expand-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    width: 35px;
+    height: 35px;
+    line-height: 31px;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    opacity: 0.8;
+}
+
+.expand-button:hover {
+    background-color: #f5f5f5;
+    transform: scale(1.1);
+    opacity: 1;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.expanded-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: #f8f9fa;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    animation: expandView 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes expandView {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.chat-container-wrapper, .browse-container-wrapper {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.chat-container.expanded {
+    height: calc(100vh - 220px);
+    animation: expandHeight 0.4s ease;
+}
+
+@keyframes expandHeight {
+    from {
+        height: 400px;
+    }
+    to {
+        height: calc(100vh - 220px);
+    }
+}
+
+.verses-container.expanded {
+    max-height: calc(100vh - 200px);
+}
+
+.close-expanded {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    width: 45px;
+    height: 45px;
+    line-height: 41px;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1005;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    animation: fadeIn 0.3s ease;
+}
+
+.close-expanded:hover {
+    background-color: #f5f5f5;
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.expanded-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    padding: 30px;
+    animation: slideInUp 0.4s ease;
+    transform: translateZ(0);
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.browse-layout-expanded {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 30px;
+    animation: fadeIn 0.5s ease;
+}
+
+.verse-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 15px;
+    animation: fadeIn 0.5s ease;
+}
+
+.surah-selector.expanded {
+    flex-direction: column;
+    align-items: stretch;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    animation: fadeInRight 0.4s ease;
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.surah-selector.expanded label {
+    margin-bottom: 10px;
+    margin-left: 0;
+    font-weight: bold;
+}
+
+.surah-selector.expanded select {
+    margin-bottom: 10px;
+    margin-left: 0;
+}
+
+/* Add active state animations to input elements */
+input:active, select:active, button:active {
+    transform: scale(0.98);
+}
+
+/* Suggestion links styling */
+#suggestions {
+    margin-top: 20px;
+    text-align: center;
+    padding: 15px;
+    border-top: 1px solid #eaeaea;
+}
+
+.suggestion {
+    display: inline-block;
+    text-decoration: none;
+    color: #3498db;
+    margin: 0 10px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.suggestion:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    right: 0;
+    background: #3498db;
+    transition: width 0.3s ease;
+    bottom: -3px;
+}
+
+.suggestion:hover:after {
+    width: 100%;
+    left: 0;
+    right: auto;
+}
+
+.suggestion:hover {
+    color: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* Theme transition effect */
+@media (prefers-reduced-motion: no-preference) {
+    * {
+        transition-duration: 0.3s;
+        transition-property: background-color, border-color, box-shadow, color, opacity, transform;
+        transition-timing-function: ease;
+    }
+}
+
+/* Add scroll animations for the verses container */
+.verses-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.verses-container::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.03);
+    border-radius: 4px;
+}
+
+.verses-container::-webkit-scrollbar-thumb {
+    background: rgba(39, 174, 96, 0.3);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.verses-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(39, 174, 96, 0.5);
+}
