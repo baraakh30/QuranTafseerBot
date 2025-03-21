@@ -174,8 +174,6 @@ def browse_surah():
 
 
 
-
-
 @app.route('/api/query', methods=['POST'])
 def query():
     data = request.json
@@ -187,6 +185,22 @@ def query():
     
     response = tafsir_bot.respond(user_query, preferred_source)
     return jsonify({'response': response})
+
+
+@app.route('/api/get_surah_info', methods=['POST'])
+def get_surah_info():
+        data = request.json
+        surah_id = int(data.get('surah_id'))
+        # Get total ayahs for this surah
+        total_ayahs = len(tafsir_bot.get_surah_verses(surah_id))
+        surah = quran_suras.get(surah_id, None)
+        return jsonify({
+            'surah_id': surah_id,
+            'total_ayahs': total_ayahs,
+            'ayahs_per_page': 2,  # Configure based on your pagination
+            'surah_name_ar': quran_suras.get(surah_id, None)['arabic'],
+            'surah_name_en': quran_suras.get(surah_id, None)['english']
+        })
 
 @app.route('/api/sources')
 def get_sources():

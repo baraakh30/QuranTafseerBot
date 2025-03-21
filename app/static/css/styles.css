@@ -684,3 +684,197 @@ input:active, select:active, button:active {
 .verses-container::-webkit-scrollbar-thumb:hover {
     background: rgba(39, 174, 96, 0.5);
 }
+/* Ayah Navigation Bar */
+.ayah-nav-bar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    background-color: rgba(250, 250, 250, 0.95);
+    border-radius: 25px;
+    padding: 8px 12px;
+    margin: 0 auto 15px auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+    text-align: center;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-width: 95%;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(200, 200, 200, 0.5);
+    gap: 8px;
+}
+
+.ayah-nav-bar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Ayah Navigation Buttons */
+.ayah-nav-button {
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: #f0f0f0;
+    margin: 0 2px;
+    cursor: pointer;
+    font-family: 'Amiri', serif;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ayah-nav-button:hover,
+.ayah-nav-button:focus {
+    background-color: #e6e6e6;
+    transform: scale(1.1);
+}
+
+.ayah-nav-button.active {
+    background-color: #1a73e8;
+    color: white;
+    font-weight: bold;
+    transform: scale(1.15);
+}
+
+.ayah-nav-button.current-page {
+    border: 2px solid #1a73e8;
+}
+
+.ayah-nav-button.full-surah {
+    min-width: 28px;
+    height: 28px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Section labels */
+.ayah-nav-section {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+/* Ayah jump container */
+.ayah-jump-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.ayah-jump-container input {
+    width: 60px;
+    height: 28px;
+    border-radius: 14px;
+    border: 1px solid #ddd;
+    padding: 0 10px;
+    text-align: center;
+    font-family: 'Amiri', serif;
+}
+
+.ayah-jump-container button {
+    height: 28px;
+    border-radius: 14px;
+    border: none;
+    background-color: #1a73e8;
+    color: white;
+    padding: 0 12px;
+    cursor: pointer;
+    font-family: 'Amiri', serif;
+    font-size: 12px;
+}
+
+/* Highlight animation for selected verse */
+.verse-highlight {
+    animation: verse-highlight-pulse 1.5s ease-in-out;
+}
+
+@keyframes verse-highlight-pulse {
+    0% { background-color: transparent; }
+    20% { background-color: rgba(26, 115, 232, 0.15); }
+    80% { background-color: rgba(26, 115, 232, 0.15); }
+    100% { background-color: transparent; }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .ayah-nav-bar {
+        padding: 6px 10px;
+        border-radius: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .ayah-nav-button {
+        min-width: 28px;
+        height: 28px;
+        font-size: 12px;
+        margin: 0 2px;
+    }
+    
+    .ayah-nav-section {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 5px;
+    }
+    
+    .ayah-jump-container {
+        width: 100%;
+        justify-content: center;
+        margin: 8px 0;
+    }
+}
+
+/* In expanded view - make it more prominent */
+#surah-browser-expanded .ayah-nav-bar {
+    position: sticky;
+    top: 10px;
+    max-width: 90%;
+    padding: 10px 15px;
+    border-radius: 30px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Fix expanded view layout */
+.browse-layout-expanded {
+    display: flex;
+    flex-direction: column !important; /* Override any row display */
+    width: 100%;
+    max-width: 100%;
+}
+
+.browse-layout-expanded .browse-sidebar {
+    width: 100% !important;
+    margin-bottom: 20px;
+}
+
+.browse-layout-expanded .browse-content {
+    width: 100% !important;
+}
+
+/* Improve verse card display for mobile */
+.verse-card {
+    scroll-margin-top: 60px; /* Provides space for the nav bar when scrolling to a verse */
+}
+
+/* Adjust verse card layout in expanded grid view */
+.verse-cards-grid .verse-card {
+    scroll-margin-top: 80px;
+}
+
+.verse-cards-grid {
+    display: block !important; /* Override any grid display */
+    width: 100%;
+}
