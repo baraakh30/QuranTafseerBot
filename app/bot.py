@@ -259,6 +259,23 @@ class TafsirChatbot:
         if len(score_df) == 0:
             return "لم أجد أي تفسير مناسب لسؤالك. حاول السؤال عن آية محددة (مثل ٢:٢٥٥) أو أعد صياغة سؤالك."
         
+        # Check if any result has a high confidence score (>= 0.7)
+        high_confidence_results = score_df[score_df['score'] >= 0.7]
+        
+        if len(high_confidence_results) > 0:
+            # Return only the highest confidence result
+            best_match = high_confidence_results.sort_values('score', ascending=False).iloc[0]
+            idx = best_match['index']
+            result = {
+                'verse_id': f"{self.df.iloc[idx]['sura_number']}:{self.df.iloc[idx]['ayah_number']}",
+                'text': self.df.iloc[idx]['ayah'],
+                'tafseer_source': self.df.iloc[idx]['tafsir_name'],
+                'tafseer': self.df.iloc[idx]['tafsir'],
+                'similarity': best_match['score']
+            }
+            return self._format_response([result])
+        
+        # If no high confidence match, continue with normal processing
         # For each verse_id, select the source with highest score (prioritizing longer tafsirs in case of ties)
         # First sort by score (descending) and tafsir_length (descending)
         score_df = score_df.sort_values(['score', 'tafsir_length'], ascending=[False, False])
@@ -296,9 +313,6 @@ class TafsirChatbot:
             response += f"المصدر: {result['tafseer_source']}\n"
             response += f"التفسير: {result['tafseer']}\n"
             
-            if 'similarity' in result:
-                response += f"(نسبة المطابقة: {result['similarity']:.2f})\n"
-                
             if i < len(results) - 1:
                 response += "\n---\n\n"
                 
@@ -316,6 +330,71 @@ class TafsirChatbot:
         # Convert to integers and sort
         verse_numbers = sorted([int(v) for v in verses])
         return verse_numbers
+    def get_surah_verses(self, surah_id):
+        """
+        Get all unique verse numbers for a specific surah.
+        
+        Parameters:
+        ----------
+        surah_id : int or str
+            The ID of the surah to get verses for
+            
+        Returns:
+        -------
+        list
+            A sorted list of unique verse numbers in this surah
+        """
+        # Convert surah_id to string for consistency with DataFrame storage
+        surah_str = str(surah_id)
+        
+        # Filter the DataFrame to get only the specified surah
+        surah_df = self.df[self.df['sura_number'] == surah_str]
+        
+        # Extract unique ayah numbers
+        unique_verses = surah_df['ayah_number'].unique()
+        
+        # Convert to integers and sort numerically
+        verse_numbers = sorted([int(v) for v in unique_verses])
+        
+        return verse_numbers
+
+    def get_surah_info(self, surah_id):
+        """
+        Get information about a specific surah including verse count.
+        
+        Parameters:
+        ----------
+        surah_id : int or str
+            The ID of the surah
+            
+        Returns:
+        -------
+        dict
+            Dictionary containing surah information including total verses
+        """
+        surah_str = str(surah_id)
+        
+        # Check if the surah exists in our dataset
+        if surah_str not in self.df['sura_number'].values:
+            return {"error": f"Surah {surah_id} not found in the dataset"}
+        
+        # Get unique verses in this surah
+        verses = self.get_surah_verses(surah_id)
+        
+        # Get the first occurrence of this surah to extract name information
+        first_verse = self.df[self.df['sura_number'] == surah_str].iloc[0]
+        
+        # Sample verse text to extract surah name if available
+        # This assumes the verse text contains the surah name in some format
+        # You may need to adjust based on your actual data structure
+        
+        return {
+            "surah_id": int(surah_id),
+            "verse_count": len(verses),
+            "verses": verses,
+            "first_verse": min(verses),
+            "last_verse": max(verses)
+        }
         
     def respond(self, user_input, preferred_source=None):
         """Main method to process user input and generate a response"""
