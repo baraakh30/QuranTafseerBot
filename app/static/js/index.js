@@ -1303,5 +1303,232 @@ document.addEventListener('DOMContentLoaded', function () {
     prevPageButton.addEventListener('click', createAyahNavBar);
     // Call to initialize
     initAyahNavigation();
+
+    function addMobileBottomNav() {
+        // Only add for mobile devices
+        if (window.innerWidth <= 768) {
+            const nav = document.createElement('div');
+            nav.className = 'mobile-bottom-nav';
+            nav.innerHTML = `
+                <button id="mobile-chat-btn" aria-label="Chat">💬</button>
+                <button id="mobile-browse-btn" aria-label="Browse">📖</button>
+                <button id="mobile-sources-btn" aria-label="Sources">📚</button>
+                <button id="mobile-top-btn" aria-label="Scroll to top">⬆️</button>
+            `;
+            
+            document.body.appendChild(nav);
+            
+            // Add event listeners
+            document.getElementById('mobile-chat-btn').addEventListener('click', () => {
+                document.querySelector('.chat-container-wrapper').scrollIntoView({behavior: 'smooth'});
+            });
+            
+            document.getElementById('mobile-browse-btn').addEventListener('click', () => {
+                document.querySelector('.browse-container').scrollIntoView({behavior: 'smooth'});
+            });
+            
+            document.getElementById('mobile-sources-btn').addEventListener('click', () => {
+                userInput.value = "المصادر";
+                sendMessage();
+            });
+            
+            document.getElementById('mobile-top-btn').addEventListener('click', () => {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+    }
+    
+    addMobileBottomNav();
+    function addMobileGestureSupport() {
+        // Only for mobile devices
+        if (window.innerWidth <= 768) {
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            const handleSwipe = (element, leftCallback, rightCallback) => {
+                element.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, {passive: true});
+                
+                element.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipeGesture(leftCallback, rightCallback);
+                }, {passive: true});
+            };
+            
+            const handleSwipeGesture = (leftCallback, rightCallback) => {
+                const minSwipeDistance = 50;
+                const swipeDistance = touchEndX - touchStartX;
+                
+                if (swipeDistance > minSwipeDistance && rightCallback) {
+                    // Right swipe
+                    rightCallback();
+                } else if (swipeDistance < -minSwipeDistance && leftCallback) {
+                    // Left swipe
+                    leftCallback();
+                }
+            };
+            
+            // Add swipe support for surah browsing
+            const versesContainer = document.getElementById('verses-container');
+            if (versesContainer) {
+                handleSwipe(
+                    versesContainer,
+                    () => { if (!nextPageButton.disabled) nextPageButton.click(); },  // Left swipe - next page
+                    () => { if (!prevPageButton.disabled) prevPageButton.click(); }   // Right swipe - prev page (RTL direction)
+                );
+            }
+            
+            // Add collapsible tafseer support
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('read-more')) {
+                    const tafseerDiv = e.target.parentNode;
+                    tafseerDiv.classList.toggle('expanded');
+                    e.target.textContent = tafseerDiv.classList.contains('expanded') ? 'عرض أقل' : 'قراءة المزيد...';
+                }
+            });
+        }
+    }
+    
+    addMobileGestureSupport();
+
+    function addDoubleTapZoom() {
+        if (window.innerWidth <= 768) {
+            let lastTap = 0;
+            const tapDelay = 300; // ms
+            
+            document.addEventListener('click', (e) => {
+                // Check if click was on a verse text
+                if (e.target.closest('.verse-text') || e.target.closest('.tafseer-text')) {
+                    const currentTime = new Date().getTime();
+                    const tapLength = currentTime - lastTap;
+                    
+                    if (tapLength < tapDelay && tapLength > 0) {
+                        // Double tap detected
+                        e.preventDefault();
+                        const element = e.target.closest('.verse-text') || e.target.closest('.tafseer-text');
+                        
+                        if (element.classList.contains('zoomed')) {
+                            // Reset to normal
+                            element.classList.remove('zoomed');
+                            element.style.fontSize = '';
+                        } else {
+                            // Zoom text
+                            element.classList.add('zoomed');
+                            element.style.fontSize = '1.4em';
+                        }
+                    }
+                    lastTap = currentTime;
+                }
+            });
+        }
+    }
+    
+    addDoubleTapZoom();
+    function optimizeMobileKeyboard() {
+        if (window.innerWidth <= 768) {
+            const userInputField = document.getElementById('user-input');
+            
+            // Scroll to input when focused
+            userInputField.addEventListener('focus', () => {
+                // Small delay to allow keyboard to appear
+                setTimeout(() => {
+                    userInputField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+            
+            // Auto-hide keyboard when scrolling in verses container
+            const versesContainer = document.getElementById('verses-container');
+            if (versesContainer) {
+                versesContainer.addEventListener('touchstart', () => {
+                    if (document.activeElement === userInputField) {
+                        userInputField.blur();
+                    }
+                });
+            }
+            
+            // Add quick input suggestions above keyboard
+            const addQuickSuggestions = () => {
+                const suggestionsBar = document.createElement('div');
+                suggestionsBar.className = 'quick-suggestions';
+                suggestionsBar.innerHTML = `
+                    <div class="quick-suggestion" data-text="2:255">آية الكرسي</div>
+                    <div class="quick-suggestion" data-text="المصادر">المصادر</div>
+                `;
+                
+                // Insert after input group
+                const inputGroup = document.querySelector('.input-group');
+                inputGroup.parentNode.insertBefore(suggestionsBar, inputGroup.nextSibling);
+                
+                // Add event listeners
+                document.querySelectorAll('.quick-suggestion').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        userInputField.value = btn.dataset.text;
+                        userInputField.focus();
+                    });
+                });
+            };
+            
+            // Call once DOM is fully loaded
+            if (document.readyState === 'complete') {
+                addQuickSuggestions();
+            } else {
+                window.addEventListener('load', addQuickSuggestions);
+            }
+        }
+    }
+    
+    optimizeMobileKeyboard();
+
+
+    function optimizeMobilePerformance() {
+        // Limit cache size for better memory management on mobile
+        const MAX_CACHE_ENTRIES = window.innerWidth <= 768 ? 10 : 20;
+        
+        // Override pageCache with a more memory-efficient version
+        const cacheEntries = [];
+        const originalPageCache = pageCache;
+        
+        // Create a new pageCache object with getter/setter
+        window.pageCache = new Proxy({}, {
+            get: function(target, prop) {
+                return originalPageCache[prop];
+            },
+            set: function(target, prop, value) {
+                // If we're at maximum capacity, remove oldest entry
+                if (cacheEntries.length >= MAX_CACHE_ENTRIES) {
+                    const oldestEntry = cacheEntries.shift();
+                    delete originalPageCache[oldestEntry];
+                }
+                
+                // Add new entry
+                cacheEntries.push(prop);
+                originalPageCache[prop] = value;
+                return true;
+            }
+        });
+        
+        // Add support for lazy loading images if any
+        if ('loading' in HTMLImageElement.prototype) {
+            document.querySelectorAll('img').forEach(img => {
+                img.loading = 'lazy';
+            });
+        }
+        
+        // Disable complex animations on low-power devices
+        const isLowPowerDevice = () => {
+            return window.innerWidth <= 768 && 
+                   navigator.hardwareConcurrency && 
+                   navigator.hardwareConcurrency <= 4;
+        };
+        
+        if (isLowPowerDevice()) {
+            document.body.classList.add('reduce-animations');
+        }
+    }
+    
+    optimizeMobilePerformance();
+
+
 });
 

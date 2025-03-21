@@ -31,8 +31,17 @@
             <div id="chat-container" class="chat-container"></div>
         </div>        
         <div class="input-group">
-            <input type="text" id="user-input" placeholder="اكتب سؤالك أو رقم الآية (مثل 2:255)..." />
-            <button id="send-button">إرسال</button>
+            <input type="text" 
+                   id="user-input" 
+                   placeholder="اكتب سؤالك أو رقم الآية (مثل 2:255)..." 
+                   autocomplete="off"
+                   autocorrect="off"
+                   autocapitalize="off"
+                   spellcheck="false" />
+            <button id="send-button">
+                <span class="button-text">إرسال</span>
+                <span class="button-icon">➤</span>
+            </button>
         </div>
         <div class="browse-container-wrapper">
             <div class="expand-button" id="expand-browse">⤢</div>

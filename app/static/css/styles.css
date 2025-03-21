@@ -878,3 +878,440 @@ input:active, select:active, button:active {
     display: block !important; /* Override any grid display */
     width: 100%;
 }
+
+/* Add these to your styles.css file */
+
+/* Mobile-specific enhancements */
+@media (max-width: 768px) {
+    /* Container adjustments */
+    .container {
+      margin: 15px auto;
+      padding: 15px;
+      width: 95%;
+      max-width: 100%;
+      border-radius: 12px;
+    }
+    
+    /* Header adjustments */
+    header h1 {
+      font-size: 1.5rem;
+    }
+    
+    .subtitle {
+      font-size: 0.9rem;
+    }
+    
+    /* Input controls */
+    .input-group {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .input-group input {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+    
+    .input-group button {
+      width: 100%;
+    }
+    
+    /* Source selector */
+    #source-selector {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    #source-selector select {
+      width: 100%;
+      margin: 5px 0;
+    }
+    
+    /* Chat container */
+    .chat-container {
+      height: 350px;
+    }
+    
+    .chat-message {
+      max-width: 90%;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+    
+    /* Browse container */
+    .surah-selector {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .surah-selector label {
+      margin-left: 0;
+      margin-bottom: 5px;
+    }
+    
+    .surah-selector select {
+      margin: 0 0 10px 0;
+    }
+    
+    .surah-selector button {
+      width: 100%;
+    }
+    
+    /* Surah browser */
+    .surah-header {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .pagination {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    /* Verse cards */
+    .verse-card {
+      padding: 15px;
+    }
+    
+    /* Expanded view fixes */
+    .expanded-container {
+      padding: 15px;
+      margin: 10px;
+    }
+    
+    /* Fix for the expanded button position */
+    .expand-button {
+      top: 5px;
+      right: 5px;
+      width: 30px;
+      height: 30px;
+      line-height: 26px;
+      font-size: 16px;
+    }
+  }
+  
+  /* Touch-friendly button sizes */
+  @media (max-width: 768px) {
+    button, select, input {
+      min-height: 44px; /* Apple's recommended touch target size */
+    }
+    
+    .ayah-nav-button {
+      min-width: 36px;
+      height: 36px;
+    }
+  }
+
+  /* Mobile-specific styles for better touch experience */
+@media (max-width: 768px) {
+    /* Prevent scroll on body when expanded view is active */
+    body.no-scroll {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* More spacing between elements for easier touch */
+    .verse-id, .tafseer-source {
+      padding: 8px 0;
+    }
+    
+    /* Better expanded view for mobile */
+    .expanded-view {
+      padding: 10px;
+    }
+    
+    .expanded-container {
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+      max-height: calc(100vh - 30px);
+      overflow-y: auto;
+    }
+    
+    /* Improve layout for browse-layout-expanded */
+    .browse-layout-expanded {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .browse-sidebar {
+      margin-bottom: 15px;
+    }
+    
+    /* Better touch targets for scroll indication */
+    .verses-container::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 5px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 3px;
+      margin: 10px auto;
+    }
+    
+    /* Bottom navigation for mobile */
+    .mobile-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+      border-top: 1px solid #eee;
+    }
+    
+    .mobile-bottom-nav button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #27ae60;
+    }
+    
+    /* Add padding to bottom of page to account for bottom nav */
+    .container {
+      padding-bottom: 60px;
+    }
+    
+    /* Mobile ayah navigation improvements */
+    .ayah-nav-bar {
+      position: sticky;
+      top: 0;
+      padding: 5px;
+      z-index: 10;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+    
+    /* Mobile-specific verse card modifications */
+    .verse-card .verse-text {
+      font-size: 1.1em;
+      line-height: 1.7;
+    }
+    
+    /* Long text handling for mobile */
+    .mobile-tafseer {
+      position: relative;
+      max-height: 150px;
+      overflow: hidden;
+    }
+    
+    .mobile-tafseer.expanded {
+      max-height: none;
+    }
+    
+    .mobile-tafseer::after {
+      content: 'المزيد...';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: linear-gradient(to left, white 50%, transparent);
+      padding: 5px 10px;
+      color: #27ae60;
+      font-weight: bold;
+    }
+    
+    .mobile-tafseer.expanded::after {
+      content: 'عرض أقل';
+    }
+  }
+
+  /* Font size adjustments for mobile */
+@media (max-width: 768px) {
+    .verse-text {
+        font-size: 1.2em;
+        line-height: 1.8;
+        padding: 15px;
+    }
+    
+    .tafseer-text {
+        font-size: 1.1em;
+        line-height: 1.7;
+    }
+    
+    /* Make headers more compact */
+    header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+    }
+    
+    /* Better spacing for mobile touch */
+    .chat-message {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+}
+
+/* Add a collapsible tafseer text for mobile */
+.collapsible-tafseer {
+    position: relative;
+    max-height: 200px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.collapsible-tafseer.expanded {
+    max-height: none;
+}
+
+.collapsible-tafseer .read-more {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(to left, white 40%, transparent);
+    width: 100%;
+    text-align: center;
+    padding: 30px 0 5px 0;
+    cursor: pointer;
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.zoomed {
+    transition: font-size 0.3s ease;
+    background-color: rgba(245, 245, 245, 0.95);
+    padding: 20px !important;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin: 10px 0;
+}
+
+/* Mobile loading state improvement */
+@media (max-width: 768px) {
+    .loading {
+        margin: 30px auto;
+        text-align: center;
+        padding-left: 0;
+        padding-top: 40px;
+    }
+    
+    .loading:before {
+        left: 50%;
+        margin-left: -15px;
+    }
+    
+    /* Add pull-to-refresh indicator */
+    .verses-container:before {
+        content: '⟳ اسحب للتحديث';
+        display: block;
+        text-align: center;
+        padding: 10px;
+        color: #999;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .verses-container.pulling:before {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Improved buttons for touch */
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 20px;
+        transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+    
+    button:active {
+        transform: scale(0.95);
+    }
+    
+    #send-button {
+        min-width: 80px;
+    }
+    
+    .button-text {
+        display: none;
+    }
+    
+    .button-icon {
+        display: block;
+        font-size: 1.2em;
+    }
+    
+    /* Better tab highlighting */
+    input:focus, button:focus, select:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.3);
+    }
+    
+    /* Mobile bottom navigation */
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        background: white;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        padding: 10px 0;
+    }
+    
+    .mobile-bottom-nav button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        padding: 10px;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .mobile-bottom-nav button:active {
+        background-color: rgba(39, 174, 96, 0.2);
+    }
+    
+    /* Add padding to bottom to account for nav bar */
+    body {
+        padding-bottom: 70px;
+    }
+}
+.quick-suggestions {
+    display: none;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 0;
+    margin: 5px 0 15px 0;
+    text-align: center;
+    -webkit-overflow-scrolling: touch;
+}
+
+.quick-suggestion {
+    display: inline-block;
+    padding: 8px 15px;
+    margin: 0 5px;
+    background-color: #f5f5f5;
+    border-radius: 20px;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-suggestion:active {
+    background-color: #e0e0e0;
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    .quick-suggestions {
+        display: block;
+    }
+}
