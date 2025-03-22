@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Add suggestion click events
+    // Add suggestion click events
     suggestions.forEach(suggestion => {
         suggestion.addEventListener('click', function (e) {
             e.preventDefault();
             const query = this.getAttribute('data-query');
-
 
             // Check if the query is for Surah Al-Fatiha
             if (query === "1:1") {
@@ -31,13 +31,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Select the first surah in the dropdown
                 setTimeout(() => {
                     surahSelect.value = "1";
-                    // Trigger the browse button click
-                    browseButton.click();
 
-                    // Wait for content to load and scroll to verses container
-                    setTimeout(() => {
-                        versesContainer.scrollIntoView({ behavior: 'smooth' });
-                    }, 500);
+                    // Explicitly fetch surah info before triggering browse action
+                    fetchSurahInfo("1").then(() => {
+                        // After fetching info, call the original browse function directly
+                        // or trigger the browse flow
+                        browseButton.click();
+
+                        // Wait for content to load and scroll to verses container
+                        setTimeout(() => {
+                            versesContainer.scrollIntoView({ behavior: 'smooth' });
+                        }, 500);
+                    });
                 }, 500);
 
                 return;
@@ -1315,52 +1320,52 @@ document.addEventListener('DOMContentLoaded', function () {
                 <button id="mobile-sources-btn" aria-label="Sources">📚</button>
                 <button id="mobile-top-btn" aria-label="Scroll to top">⬆️</button>
             `;
-            
+
             document.body.appendChild(nav);
-            
+
             // Add event listeners
             document.getElementById('mobile-chat-btn').addEventListener('click', () => {
-                document.querySelector('.chat-container-wrapper').scrollIntoView({behavior: 'smooth'});
+                document.querySelector('.chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
             });
-            
+
             document.getElementById('mobile-browse-btn').addEventListener('click', () => {
-                document.querySelector('.browse-container').scrollIntoView({behavior: 'smooth'});
+                document.querySelector('.browse-container').scrollIntoView({ behavior: 'smooth' });
             });
-            
+
             document.getElementById('mobile-sources-btn').addEventListener('click', () => {
                 userInput.value = "المصادر";
-                document.querySelector('.chat-container-wrapper').scrollIntoView({behavior: 'smooth'});
+                document.querySelector('.chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
                 sendMessage();
             });
-            
+
             document.getElementById('mobile-top-btn').addEventListener('click', () => {
-                window.scrollTo({top: 0, behavior: 'smooth'});
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         }
     }
-    
+
     addMobileBottomNav();
     function addMobileGestureSupport() {
         // Only for mobile devices
         if (window.innerWidth <= 768) {
             let touchStartX = 0;
             let touchEndX = 0;
-            
+
             const handleSwipe = (element, leftCallback, rightCallback) => {
                 element.addEventListener('touchstart', (e) => {
                     touchStartX = e.changedTouches[0].screenX;
-                }, {passive: true});
-                
+                }, { passive: true });
+
                 element.addEventListener('touchend', (e) => {
                     touchEndX = e.changedTouches[0].screenX;
                     handleSwipeGesture(leftCallback, rightCallback);
-                }, {passive: true});
+                }, { passive: true });
             };
-            
+
             const handleSwipeGesture = (leftCallback, rightCallback) => {
                 const minSwipeDistance = 50;
                 const swipeDistance = touchEndX - touchStartX;
-                
+
                 if (swipeDistance > minSwipeDistance && rightCallback) {
                     // Right swipe
                     rightCallback();
@@ -1369,7 +1374,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     leftCallback();
                 }
             };
-            
+
             // Add swipe support for surah browsing
             const versesContainer = document.getElementById('verses-container');
             if (versesContainer) {
@@ -1379,7 +1384,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     () => { if (!prevPageButton.disabled) prevPageButton.click(); }   // Right swipe - prev page (RTL direction)
                 );
             }
-            
+
             // Add collapsible tafseer support
             document.addEventListener('click', (e) => {
                 if (e.target.classList.contains('read-more')) {
@@ -1390,25 +1395,25 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
-    
+
     addMobileGestureSupport();
 
     function addDoubleTapZoom() {
         if (window.innerWidth <= 768) {
             let lastTap = 0;
             const tapDelay = 300; // ms
-            
+
             document.addEventListener('click', (e) => {
                 // Check if click was on a verse text
                 if (e.target.closest('.verse-text') || e.target.closest('.tafseer-text')) {
                     const currentTime = new Date().getTime();
                     const tapLength = currentTime - lastTap;
-                    
+
                     if (tapLength < tapDelay && tapLength > 0) {
                         // Double tap detected
                         e.preventDefault();
                         const element = e.target.closest('.verse-text') || e.target.closest('.tafseer-text');
-                        
+
                         if (element.classList.contains('zoomed')) {
                             // Reset to normal
                             element.classList.remove('zoomed');
@@ -1424,12 +1429,12 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
-    
+
     addDoubleTapZoom();
     function optimizeMobileKeyboard() {
         if (window.innerWidth <= 768) {
             const userInputField = document.getElementById('user-input');
-            
+
             // Scroll to input when focused
             userInputField.addEventListener('focus', () => {
                 // Small delay to allow keyboard to appear
@@ -1437,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     userInputField.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 300);
             });
-            
+
             // Auto-hide keyboard when scrolling in verses container
             const versesContainer = document.getElementById('verses-container');
             if (versesContainer) {
@@ -1447,7 +1452,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             }
-            
+
             // Add quick input suggestions above keyboard
             const addQuickSuggestions = () => {
                 const suggestionsBar = document.createElement('div');
@@ -1456,11 +1461,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="quick-suggestion" data-text="2:255">آية الكرسي</div>
                     <div class="quick-suggestion" data-text="المصادر">المصادر</div>
                 `;
-                
+
                 // Insert after input group
                 const inputGroup = document.querySelector('.input-group');
                 inputGroup.parentNode.insertBefore(suggestionsBar, inputGroup.nextSibling);
-                
+
                 // Add event listeners
                 document.querySelectorAll('.quick-suggestion').forEach(btn => {
                     btn.addEventListener('click', () => {
@@ -1469,7 +1474,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 });
             };
-            
+
             // Call once DOM is fully loaded
             if (document.readyState === 'complete') {
                 addQuickSuggestions();
@@ -1478,56 +1483,56 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
-    
+
     optimizeMobileKeyboard();
 
 
     function optimizeMobilePerformance() {
         // Limit cache size for better memory management on mobile
         const MAX_CACHE_ENTRIES = window.innerWidth <= 768 ? 10 : 20;
-        
+
         // Override pageCache with a more memory-efficient version
         const cacheEntries = [];
         const originalPageCache = pageCache;
-        
+
         // Create a new pageCache object with getter/setter
         window.pageCache = new Proxy({}, {
-            get: function(target, prop) {
+            get: function (target, prop) {
                 return originalPageCache[prop];
             },
-            set: function(target, prop, value) {
+            set: function (target, prop, value) {
                 // If we're at maximum capacity, remove oldest entry
                 if (cacheEntries.length >= MAX_CACHE_ENTRIES) {
                     const oldestEntry = cacheEntries.shift();
                     delete originalPageCache[oldestEntry];
                 }
-                
+
                 // Add new entry
                 cacheEntries.push(prop);
                 originalPageCache[prop] = value;
                 return true;
             }
         });
-        
+
         // Add support for lazy loading images if any
         if ('loading' in HTMLImageElement.prototype) {
             document.querySelectorAll('img').forEach(img => {
                 img.loading = 'lazy';
             });
         }
-        
+
         // Disable complex animations on low-power devices
         const isLowPowerDevice = () => {
-            return window.innerWidth <= 768 && 
-                   navigator.hardwareConcurrency && 
-                   navigator.hardwareConcurrency <= 4;
+            return window.innerWidth <= 768 &&
+                navigator.hardwareConcurrency &&
+                navigator.hardwareConcurrency <= 4;
         };
-        
+
         if (isLowPowerDevice()) {
             document.body.classList.add('reduce-animations');
         }
     }
-    
+
     optimizeMobilePerformance();
     function addClearChatButton() {
         // Create the clear button
@@ -1535,13 +1540,13 @@ document.addEventListener('DOMContentLoaded', function () {
         clearButton.id = 'clear-chat-button';
         clearButton.className = 'clear-chat-button';
         clearButton.innerHTML = '<span class="clear-icon">🗑️</span><span class="clear-text">مسح المحادثة</span>';
-        
+
         // Add the button next to the source selector
         const sourceSelector = document.getElementById('source-selector');
         sourceSelector.appendChild(clearButton);
-        
+
         // Also add it to the expanded view when active
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.id === 'expand-chat') {
                 setTimeout(() => {
                     const expandedSourceSelector = document.querySelector('.expanded-container #source-selector');
@@ -1556,7 +1561,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             const expandedClearButton = clearButton.cloneNode(true);
                             expandedClearButton.id = 'clear-chat-button-expanded';
                             expandedSourceSelector.appendChild(expandedClearButton);
-                            
+
                             // Add event listener to the expanded clear button
                             expandedClearButton.addEventListener('click', clearChat);
                         }
@@ -1564,27 +1569,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 100);
             }
         });
-        
-        
+
+
         // Add click handler to clear the chat
         clearButton.addEventListener('click', clearChat);
-        
+
         // Function to clear chat and add welcome message
         function clearChat() {
             // Get chat containers (both normal and expanded view)
             const chatContainer = document.getElementById('chat-container');
-            
+
             // Clear all messages
             chatContainer.innerHTML = '';
-            
+
             // Add welcome message
             addBotMessage("السلام عليكم! أنا بوت التفسير. اسألني عن أي آية من القرآن الكريم وسأقدم لك تفسيرها. يمكنك تحديد سورة وآية مثل (2:255) أو البحث بالنص.");
-            
+
             // Scroll to bottom
             scrollChatToBottom();
         }
     }
-    
+
     addClearChatButton();
 
 });
