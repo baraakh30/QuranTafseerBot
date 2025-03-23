@@ -418,3 +418,125 @@ class TafsirChatbot:
         
         # For all other inputs, treat as content query
         return self.parse_request(user_input, preferred_source)
+    
+class IslamicRulingsChatbot:
+    def __init__(self):
+        # Initialize the preprocessor
+        self.preprocessor = ArabicTextPreprocessor()
+        csv_file_path = "app/static/data/binbaz.csv"
+        
+        # Load the dataset
+        if os.path.exists(csv_file_path):
+            print("Loading dataset from CSV file...")
+            self.df = pd.read_csv(csv_file_path)
+        else:
+            raise FileNotFoundError(f"Dataset file {csv_file_path} not found.")
+        
+        self.df = self.df[['questions', 'answers', 'titles']]
+        
+        # Try to load saved TF-IDF models
+        try:
+            print("Attempting to load saved model...")
+            with open('app/static/models/islamic_rulings_model.pkl', 'rb') as model_file:
+                saved_model = pickle.load(model_file)
+                self.vectorizer_title = saved_model['vectorizer_title']
+                self.tfidf_matrix_title = saved_model['matrix_title']
+                self.vectorizer_question = saved_model['vectorizer_question']
+                self.tfidf_matrix_question = saved_model['matrix_question']
+                print("Loaded model from file.")
+        except (FileNotFoundError, KeyError):
+            # Preprocess the text
+            print("Preprocessing Arabic text...")
+            self.df['clean_title'] = self.df['titles'].apply(self.preprocessor.preprocess_for_search)
+            self.df['clean_question'] = self.df['questions'].apply(self.preprocessor.preprocess_for_search)
+            
+            # Create separate TF-IDF vectorizers for titles and questions
+            print("Creating new TF-IDF matrices...")
+            self.vectorizer_title = TfidfVectorizer(
+                analyzer='char_wb', ngram_range=(2, 4), min_df=2, max_df=0.9, sublinear_tf=True
+            )
+            self.tfidf_matrix_title = self.vectorizer_title.fit_transform(self.df['clean_title'])
+            
+            self.vectorizer_question = TfidfVectorizer(
+                analyzer='char_wb', ngram_range=(2, 4), min_df=2, max_df=0.9, sublinear_tf=True
+            )
+            self.tfidf_matrix_question = self.vectorizer_question.fit_transform(self.df['clean_question'])
+            
+            # Save the models
+            with open('app/static/models/islamic_rulings_model.pkl', 'wb') as model_file:
+                model_data = {
+                    'vectorizer_title': self.vectorizer_title,
+                    'matrix_title': self.tfidf_matrix_title,
+                    'vectorizer_question': self.vectorizer_question,
+                    'matrix_question': self.tfidf_matrix_question
+                }
+                pickle.dump(model_data, model_file)
+                print("Saved model to file.")
+        
+        print(f"Chatbot initialized with {len(self.df)} Islamic rulings.")
+
+    def search_rulings(self, query, top_n=5):
+        # Clean the query
+        clean_query = self.preprocessor.preprocess_for_search(query)
+        
+        # Vectorize the query for both title and question models
+        query_vector_title = self.vectorizer_title.transform([clean_query])
+        query_vector_question = self.vectorizer_question.transform([clean_query])
+        
+        # Compute similarity scores
+        similarity_title = cosine_similarity(query_vector_title, self.tfidf_matrix_title)[0]
+        similarity_question = cosine_similarity(query_vector_question, self.tfidf_matrix_question)[0]
+        
+        # Combine scores with weights (70% title, 30% question)
+        combined_similarity = 0.7 * similarity_title + 0.3 * similarity_question
+        
+        # Create a DataFrame with scores
+        score_df = pd.DataFrame({
+            'index': range(len(combined_similarity)),
+            'score': combined_similarity
+        })
+        
+        # Filter by similarity threshold
+        score_df = score_df[score_df['score'] > 0.3]
+        
+        if len(score_df) == 0:
+            return "لم أجد أي فتوى تتعلق بسؤالك. يرجى إعادة صياغة السؤال أو توضيحه أكثر."
+        
+        # Sort and select top results
+        score_df = score_df.sort_values('score', ascending=False).head(top_n)
+        
+        # Format results
+        results = []
+        for _, row in score_df.iterrows():
+            idx = int(row['index'])
+            results.append({
+                'title': self.df.iloc[idx]['titles'],
+                'question': self.df.iloc[idx]['questions'],
+                'answer': self.df.iloc[idx]['answers'],
+                'similarity': row['score']
+            })
+        
+        return self._format_response(results)
+
+    def _format_response(self, results):
+        if isinstance(results, str):
+            return results
+        response = ""
+        for i, result in enumerate(results):
+            response += f"العنوان: {result['title']}\n\n"
+            if result['question'] and len(result['question']) > 10 and result['question'] != result['title']:
+                response += f"السؤال: {result['question']}\n\n"
+            response += f"الإجابة: {result['answer']}\n"
+            if i < len(results) - 1:
+                response += "\n---\n\n"
+        return response
+
+    def respond(self, user_input):
+        if not user_input.strip():
+            return "مرحباً بك في بوت الفتاوى الشرعية. يمكنك سؤالي عن أي حكم شرعي وسأحاول مساعدتك."
+        clean_input = user_input.lower().strip()
+        if clean_input == "خروج" or clean_input == "exit":
+            return "جزاك الله خيراً لاستخدامك بوت الفتاوى. بارك الله فيك!"
+        if clean_input == "مرحبا" or clean_input == "hello":
+            return "السلام عليكم! أنا بوت الفتاوى الشرعية. اسألني عن أي حكم شرعي وسأحاول مساعدتك."
+        return self.search_rulings(user_input)

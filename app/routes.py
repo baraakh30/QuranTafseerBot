@@ -1,6 +1,6 @@
 from flask import request, jsonify, render_template
 from app import app
-from app.bot import TafsirChatbot
+from app.bot import TafsirChatbot,IslamicRulingsChatbot
 quran_suras = {
     1: {"arabic": "الفاتحة", "english": "Al-Fatiha"},
     2: {"arabic": "البقرة", "english": "Al-Baqarah"},
@@ -120,6 +120,7 @@ quran_suras = {
 
 # Initialize the chatbot (this might take a few moments on startup)
 tafsir_bot = TafsirChatbot()
+ahkam_bot = IslamicRulingsChatbot()
 
 @app.route('/')
 def home():
@@ -185,6 +186,17 @@ def query():
     response = tafsir_bot.respond(user_query, preferred_source)
     return jsonify({'response': response})
 
+
+@app.route('/api/ahkam', methods=['POST'])
+def ahkam():
+    data = request.json
+    user_query = data.get('query', '')
+    
+    if not user_query:
+        return jsonify({'response': 'الرجاء إدخال سؤال أو رقم آية.'})
+    
+    response = ahkam_bot.respond(user_query)
+    return jsonify({'response': response})
 
 @app.route('/api/get_surah_info', methods=['POST'])
 def get_surah_info():

@@ -1416,3 +1416,326 @@ button:focus::after {
         transition-timing-function: ease;
     }
 }
+
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.confirm-dialog {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 300px;
+    width: 80%;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    direction: rtl;
+}
+
+.confirm-message {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.confirm-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.confirm-button {
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.confirm-yes {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+.confirm-yes:hover {
+    background-color: #c0392b;
+}
+
+.confirm-no {
+    background-color: #f8f9fa;
+    color: #343a40;
+    border: 1px solid #dee2e6;
+}
+
+.confirm-no:hover {
+    background-color: #e9ecef;
+}
+
+
+@media (max-width: 768px) {
+    .confirm-dialog {
+        width: 90%;
+        padding: 15px;
+    }
+    
+    .clear-chat-button {
+        padding: 8px 15px;
+    }
+}
+/* ============================
+   TAB COMPONENTS
+   ============================ */
+   .tabs {
+    display: flex;
+    margin-bottom: 24px;
+    position: relative;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 24px;
+    font-family: 'Amiri', serif;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    flex-grow: 1;
+    position: relative;
+    color: #555;
+    text-align: center;
+    overflow: hidden;
+}
+
+.tab-button:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background-color: #27ae60;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    border-radius: 3px 3px 0 0;
+    opacity: 0;
+}
+
+.tab-button:hover {
+    color: #27ae60;
+    background-color: rgba(39, 174, 96, 0.05);
+}
+
+.tab-button:hover:before {
+    width: 20px;
+    opacity: 0.5;
+}
+
+.tab-button.active {
+    color: #27ae60;
+    background-color: transparent;
+    font-weight: 700;
+}
+
+.tab-button.active:before {
+    width: 70%;
+    opacity: 1;
+}
+
+.tab-button:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(39, 174, 96, 0.3);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.tab-button:focus:after {
+    animation: ripple 1s ease-out;
+}
+
+.tab-content {
+    display: none;
+    padding: 16px;
+    animation: fadeTabContent 0.5s ease;
+    background-color: #fff;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeTabContent 0.5s ease;
+}
+
+@keyframes fadeTabContent {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================
+   RESPONSIVE TAB ADJUSTMENTS
+   ============================ */
+@media (max-width: 768px) {
+    .tabs {
+        margin-bottom: 16px;
+        border-radius: 10px 10px 0 0;
+    }
+    
+    .tab-button {
+        padding: 12px 18px;
+        font-size: 15px;
+        min-width: 100px;
+    }
+    
+    .tab-content {
+        padding: 14px 12px;
+    }
+    
+    .tab-button.active:before {
+        width: 60%;
+    }
+}
+/* Test Alert styles */
+.test-alert {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffffff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    border-right: 4px solid #f39c12;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    width: 90%;
+    max-width: 500px;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    opacity: 0;
+}
+
+.test-alert.show {
+    bottom: 20px;
+    opacity: 1;
+}
+
+.test-alert-icon {
+    font-size: 24px;
+    margin-left: 15px;
+    color: #f39c12;
+    background-color: rgba(243, 156, 18, 0.1);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.test-alert-content {
+    flex-grow: 1;
+    padding-left: 5px;
+}
+
+.test-alert-title {
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #f39c12;
+    font-size: 16px;
+}
+
+.test-alert-message {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+}
+
+.test-alert-close {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.test-alert-close:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .test-alert {
+        bottom: -100px;
+        width: 85%;
+        padding: 12px 15px;
+    }
+    
+    .test-alert.show {
+        bottom: 70px; /* Adjusted for mobile bottom navigation */
+    }
+    
+    .test-alert-icon {
+        font-size: 20px;
+        width: 38px;
+        height: 38px;
+        margin-left: 10px;
+    }
+    
+    .test-alert-title {
+        font-size: 15px;
+    }
+    
+    .test-alert-message {
+        font-size: 13px;
+    }
+}
