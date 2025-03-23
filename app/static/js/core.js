@@ -275,9 +275,20 @@ document.addEventListener('DOMContentLoaded', function () {
     function initializeTabs() {
         // Set up tab functionality
         document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', function (e) {
-                openTab(e, this.getAttribute('data-tab'));
-            });
+            // Check if the button already has an onclick attribute
+            if (!button.hasAttribute('onclick')) {
+                // Only add the event listener if it doesn't have an onclick already
+                button.addEventListener('click', function (e) {
+                    // Try to get the tab ID from the data-tab attribute
+                    const tabId = this.getAttribute('data-tab');
+                    if (tabId) {
+                        openTab(e, tabId);
+                    }
+                });
+            } else {
+                // For buttons with inline onclick, we'll let those handlers work
+                console.log('Button already has onclick, skipping event listener');
+            }
         });
     }
 
@@ -493,6 +504,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Make necessary functions available globally
-    window.openTab = openTab;
 });

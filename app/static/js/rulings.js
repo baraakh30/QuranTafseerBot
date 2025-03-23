@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Create the clear button with centered styling
         const clearButton = document.createElement('button');
-        clearButton.id = 'clear-rulings-chat-button';
+        clearButton.id = 'clear-chat-button';
         clearButton.className = 'clear-chat-button';
         clearButton.innerHTML = '<span class="clear-icon">🗑️</span><span class="clear-text">مسح المحادثة</span>';
         clearButton.style.margin = '0 auto';
@@ -313,71 +313,80 @@ document.addEventListener('DOMContentLoaded', function () {
     /**
      * Format rulings responses with proper styling
      */
-    function formatRulingsResponse(response) {
-        // Use core formatResponse if available, otherwise format here
-        if (typeof window.formatResponse === 'function') {
+    /**
+ * Format rulings responses with proper styling
+ */
+function formatRulingsResponse(response) {
+    // Use core formatResponse if available, otherwise format here
+    if (typeof window.formatResponse === 'function') {
+        // First check if this is a rulings-specific response that needs custom formatting
+        if (response.includes('السؤال:') || response.includes('الإجابة:') || response.includes('العنوان:')) {
+            // This appears to be a ruling-specific response, format it specially
+        } else {
+            // For general responses, use the shared formatter
             return window.formatResponse(response);
         }
-        
-        // Check if the response is already HTML
-        if (response.includes('<div') || response.includes('<p')) {
-            return response;
-        }
-
-        // Basic formatting for rulings results
-        let formattedResponse = response;
-
-        // Style ruling titles
-        formattedResponse = formattedResponse.replace(/العنوان: (.+?)(?=\n\n|\n$|$)/g,
-            '<div class="ruling-title">$1</div>');
-
-        // Style ruling questions
-        formattedResponse = formattedResponse.replace(/السؤال: (.+?)(?=\n\n|\n$|$)/g,
-            '<div class="ruling-question">$1</div>');
-
-        // Style ruling answers
-        formattedResponse = formattedResponse.replace(/الإجابة: (.+?)(?=\n---|$)/gs,
-            '<div class="ruling-answer">$1</div>');
-
-        // Style source references
-        formattedResponse = formattedResponse.replace(/المصدر: (.+?)(?=\n)/g,
-            '<div class="ruling-source">المصدر: $1</div>');
-
-        // Add read more functionality for long answers
-        const maxChars = window.innerWidth <= 768 ? 300 : 500;
-
-        // Process the HTML to add read more buttons to long answers
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = formattedResponse;
-
-        tempDiv.querySelectorAll('.ruling-answer').forEach(answerDiv => {
-            const content = answerDiv.innerHTML;
-
-            // Only add read more if content is long enough
-            if (content.length > maxChars) {
-                // Set the class and create shortened content
-                answerDiv.className = 'ruling-answer collapsible';
-                const shortContent = content.substring(0, maxChars) + '...';
-
-                // Add read more button
-                answerDiv.innerHTML = shortContent + ' <span class="read-more">قراءة المزيد...</span>';
-
-                // Store full content as a data attribute for later expansion
-                answerDiv.setAttribute('data-full-content', content);
-            }
-        });
-
-        formattedResponse = tempDiv.innerHTML;
-
-        // Replace separators
-        formattedResponse = formattedResponse.replace(/---/g,
-            '<div class="separator"></div>');
-
-        // Convert newlines to <br> tags
-        formattedResponse = formattedResponse.replace(/\n/g, '<br>');
-
-        return formattedResponse;
     }
+    
+    // Check if the response is already HTML
+    if (response.includes('<div') || response.includes('<p')) {
+        return response;
+    }
+
+    // Basic formatting for rulings results
+    let formattedResponse = response;
+
+    // Style ruling titles
+    formattedResponse = formattedResponse.replace(/العنوان: (.+?)(?=\n\n|\n$|$)/g,
+        '<div class="ruling-title">$1</div>');
+
+    // Style ruling questions
+    formattedResponse = formattedResponse.replace(/السؤال: (.+?)(?=\n\n|\nالإجابة|\n$|$)/gs,
+        '<div class="ruling-question">$1</div>');
+
+    // Style ruling answers - improved regex to better capture multi-line answers
+    formattedResponse = formattedResponse.replace(/الإجابة: ([\s\S]+?)(?=\n---|\nالمصدر|$)/g,
+        '<div class="ruling-answer">$1</div>');
+
+    // Style source references
+    formattedResponse = formattedResponse.replace(/المصدر: (.+?)(?=\n|$)/g,
+        '<div class="ruling-source">المصدر: $1</div>');
+
+    // Add read more functionality for long answers
+    const maxChars = window.innerWidth <= 768 ? 300 : 500;
+
+    // Process the HTML to add read more buttons to long answers
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = formattedResponse;
+
+    tempDiv.querySelectorAll('.ruling-answer').forEach(answerDiv => {
+        const content = answerDiv.innerHTML;
+
+        // Only add read more if content is long enough
+        if (content.length > maxChars) {
+            // Set the class and create shortened content
+            answerDiv.className = 'ruling-answer collapsible';
+            const shortContent = content.substring(0, maxChars) + '...';
+
+            // Add read more button
+            answerDiv.innerHTML = shortContent + ' <span class="read-more">قراءة المزيد...</span>';
+
+            // Store full content as a data attribute for later expansion
+            answerDiv.setAttribute('data-full-content', content);
+        }
+    });
+
+    formattedResponse = tempDiv.innerHTML;
+
+    // Replace separators
+    formattedResponse = formattedResponse.replace(/---/g,
+        '<div class="separator"></div>');
+
+    // Convert newlines to <br> tags
+    formattedResponse = formattedResponse.replace(/\n/g, '<br>');
+
+    return formattedResponse;
+}
 
     /**
      * Send query to the API
