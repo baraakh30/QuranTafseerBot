@@ -10,3 +10,4 @@ flask==3.1.0
 gunicorn==23.0.0
 ipykernel
 datasets==3.3.1
+kagglehub==0.3.10

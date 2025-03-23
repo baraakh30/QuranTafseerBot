@@ -124,7 +124,7 @@ class TafsirChatbot:
                 self.tfidf_matrix = saved_model['matrix']
                 print("Loaded model from file.")
         except (FileNotFoundError, KeyError):
-                    # Clean and preprocess Arabic text
+            # Clean and preprocess Arabic text
             print("Preprocessing Arabic text...")
             self.df['clean_text'] = self.df['ayah'].apply(self.preprocessor.preprocess_for_search)
             
@@ -419,6 +419,8 @@ class TafsirChatbot:
         # For all other inputs, treat as content query
         return self.parse_request(user_input, preferred_source)
     
+    
+    
 class IslamicRulingsChatbot:
     def __init__(self):
         # Initialize the preprocessor
@@ -492,6 +494,7 @@ class IslamicRulingsChatbot:
         # Merge the datasets
         print("Merging datasets...")
         self.df = pd.concat([binbaz_df, islamweb_df], ignore_index=True)
+        
         print(f"Combined dataset has {len(self.df)} rulings.")
         
         # Get available sources
@@ -503,37 +506,29 @@ class IslamicRulingsChatbot:
             print("Attempting to load saved model...")
             with open('app/static/models/islamic_rulings_model.pkl', 'rb') as model_file:
                 saved_model = pickle.load(model_file)
-                self.vectorizer_title = saved_model['vectorizer_title']
-                self.tfidf_matrix_title = saved_model['matrix_title']
-                self.vectorizer_question = saved_model['vectorizer_question']
-                self.tfidf_matrix_question = saved_model['matrix_question']
+                self.vectorizer = saved_model['vectorizer']
+                self.tfidf_matrix = saved_model['matrix']
+
                 print("Loaded model from file.")
         except (FileNotFoundError, KeyError):
             # Preprocess the text
             print("Preprocessing Arabic text...")
-            self.df['clean_title'] = self.df['titles'].apply(self.preprocessor.preprocess_for_search)
-            self.df['clean_question'] = self.df['questions'].apply(self.preprocessor.preprocess_for_search)
-            
+            self.df['clean_title'] = self.df['titles'].apply(self.preprocessor.preprocess_for_search) 
+   
             # Create separate TF-IDF vectorizers for titles and questions
             print("Creating new TF-IDF matrices...")
-            self.vectorizer_title = TfidfVectorizer(
+            self.vectorizer = TfidfVectorizer(
                 analyzer='char_wb', ngram_range=(2, 4), min_df=2, max_df=0.9, sublinear_tf=True
             )
-            self.tfidf_matrix_title = self.vectorizer_title.fit_transform(self.df['clean_title'])
-            
-            self.vectorizer_question = TfidfVectorizer(
-                analyzer='char_wb', ngram_range=(2, 4), min_df=2, max_df=0.9, sublinear_tf=True
-            )
-            self.tfidf_matrix_question = self.vectorizer_question.fit_transform(self.df['clean_question'])
-            
+            self.tfidf_matrix = self.vectorizer.fit_transform(self.df['clean_title'])
+    
             # Save the models
             os.makedirs(os.path.dirname('app/static/models/islamic_rulings_model.pkl'), exist_ok=True)
             with open('app/static/models/islamic_rulings_model.pkl', 'wb') as model_file:
                 model_data = {
-                    'vectorizer_title': self.vectorizer_title,
-                    'matrix_title': self.tfidf_matrix_title,
-                    'vectorizer_question': self.vectorizer_question,
-                    'matrix_question': self.tfidf_matrix_question
+                    'vectorizer': self.vectorizer,
+                    'matrix': self.tfidf_matrix,
+      
                 }
                 pickle.dump(model_data, model_file)
                 print("Saved model to file.")
@@ -545,20 +540,13 @@ class IslamicRulingsChatbot:
         clean_query = self.preprocessor.preprocess_for_search(query)
         
         # Vectorize the query for both title and question models
-        query_vector_title = self.vectorizer_title.transform([clean_query])
-        query_vector_question = self.vectorizer_question.transform([clean_query])
-        
+        query_vector_title = self.vectorizer.transform([clean_query])
         # Compute similarity scores
-        similarity_title = cosine_similarity(query_vector_title, self.tfidf_matrix_title)[0]
-        similarity_question = cosine_similarity(query_vector_question, self.tfidf_matrix_question)[0]
-        
-        # Combine scores with weights (70% title, 30% question)
-        combined_similarity = 0.7 * similarity_title + 0.3 * similarity_question
-        
+        similarity_title = cosine_similarity(query_vector_title, self.tfidf_matrix)[0]
         # Create a DataFrame with scores and source information
         score_df = pd.DataFrame({
-            'index': range(len(combined_similarity)),
-            'score': combined_similarity,
+            'index': range(len(similarity_title)),
+            'score': similarity_title,
             'source': self.df['source'].values
         })
         
