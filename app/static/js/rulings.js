@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const rulingsUserInput = document.getElementById('rulings-user-input');
     const rulingsSendButton = document.getElementById('rulings-send-button');
     const expandRulingsChat = document.getElementById('expand-rulings-chat');
+    const sourceSelectorR = document.getElementById('ruling-source');
 
     // Variables to track states
     let rulingsExpandedState = false;
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function initRulingsChat() {
         // Welcome message
-        addRulingsMessage('مرحباً بك في بوت الأحكام الشرعية. يمكنك سؤالي عن أي حكم شرعي وسأبحث لك في فتاوي ابن باز.');
+        addRulingsMessage('مرحباً بك في بوت الأحكام الشرعية. يمكنك سؤالي عن أي حكم شرعي وسأبحث لك في فتاوي العلماء.');
 
         // Add clear chat button
         addClearRulingsButton();
@@ -67,15 +68,15 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function expandRulingsChatF() {
         if (rulingsExpandedState) return; // Already expanding
-
+    
         rulingsExpandedState = true;
-
+    
         // Create expanded container
         const expandedView = document.createElement('div');
         expandedView.className = 'expanded-view';
         expandedView.id = 'rulings-expanded-view';
         expandedView.style.opacity = '0';
-
+    
         // Create close button
         const closeButton = document.createElement('div');
         closeButton.className = 'close-expanded';
@@ -83,16 +84,37 @@ document.addEventListener('DOMContentLoaded', function () {
         closeButton.addEventListener('click', function () {
             collapseRulingsChat();
         });
-
+    
         // Create inner container
         const expandedContainer = document.createElement('div');
         expandedContainer.className = 'expanded-container';
-
+    
         // Set title
         const title = document.createElement('h2');
         title.textContent = 'بوت الأحكام الشرعية';
         expandedContainer.appendChild(title);
-
+    
+        // Clone the source selector and add it to expanded view
+        const sourceSelector = document.getElementById('source-selector2');
+        if (sourceSelector) {
+            const sourceSelectorClone = sourceSelector.cloneNode(true);
+            sourceSelectorClone.className = 'source-selector expanded-source-selector2';
+            
+            // Get the new select element and sync it with the original
+            const newSelect = sourceSelectorClone.querySelector('select');
+            newSelect.id = 'ruling-source-expanded';
+            
+            // Set initial value to match the original
+            newSelect.value = sourceSelectorR.value;
+            
+            // Add event listener to keep both selectors in sync
+            newSelect.addEventListener('change', function() {
+                sourceSelectorR.value = this.value;
+            });
+            
+            expandedContainer.appendChild(sourceSelectorClone);
+        }
+    
         // Add clear button
         const clearButtonExpanded = document.createElement('button');
         clearButtonExpanded.id = 'clear-chat-button-expanded';
@@ -117,20 +139,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
         expandedContainer.appendChild(clearButtonExpanded);
-
+    
         // Move chat container
         expandedContainer.appendChild(rulingsChatContainer);
-
+    
         // Clone input group
         const inputGroupClone = document.querySelector('#rulings-tab .input-group').cloneNode(true);
         expandedContainer.appendChild(inputGroupClone);
-
+    
         // Set up new elements
         const newInput = inputGroupClone.querySelector('#rulings-user-input');
         newInput.id = 'rulings-user-input-expanded';
         const newSendButton = inputGroupClone.querySelector('#rulings-send-button');
         newSendButton.id = 'rulings-send-button-expanded';
-
+    
         newSendButton.addEventListener('click', function () {
             if (newInput.value.trim() !== '') {
                 rulingsUserInput.value = newInput.value;
@@ -138,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 newInput.value = '';
             }
         });
-
+    
         newInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter' && newInput.value.trim() !== '') {
                 rulingsUserInput.value = newInput.value;
@@ -147,24 +169,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 e.preventDefault();
             }
         });
-
+    
         // Add expanded classes
         rulingsChatContainer.classList.add('expanded');
-
+    
         // Add to DOM
         expandedView.appendChild(closeButton);
         expandedView.appendChild(expandedContainer);
         document.body.appendChild(expandedView);
-
+    
         // Trigger animation after DOM insertion
         requestAnimationFrame(() => {
             expandedView.style.opacity = '1';
         });
-
+    
         // Scroll to bottom of chat
         scrollRulingsChatToBottom();
     }
-
     /**
      * Collapse the expanded chat view
      */
@@ -262,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
         rulingsChatContainer.innerHTML = '';
 
         // Add welcome message
-        addRulingsMessage('مرحباً بك في بوت الأحكام الشرعية. يمكنك سؤالي عن أي حكم شرعي وسأبحث لك في فتاوي ابن باز.');
+        addRulingsMessage('مرحباً بك في بوت الأحكام الشرعية. يمكنك سؤالي عن أي حكم شرعي وسأبحث لك في فتاوي العلماء.');
 
         // Scroll to bottom
         scrollRulingsChatToBottom();
@@ -410,14 +431,14 @@ function formatRulingsResponse(response) {
         loadingElement.textContent = 'جاري البحث...';
         rulingsChatContainer.appendChild(loadingElement);
         scrollRulingsChatToBottom();
-
+        const selectedRuling = sourceSelectorR.value;
         try {
             const response = await fetch('/api/ahkam', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ query: trimmedQuery }),
+                body: JSON.stringify({ query: trimmedQuery,source:selectedRuling }),
             });
 
             if (!response.ok) {

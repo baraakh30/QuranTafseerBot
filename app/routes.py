@@ -126,7 +126,7 @@ ahkam_bot = IslamicRulingsChatbot()
 def home():
     return render_template('index.html', 
                           sources=tafsir_bot.get_available_sources(),
-                          quran_suras=quran_suras)
+                          quran_suras=quran_suras,r_sources=ahkam_bot.get_available_sources())
 
 
 @app.route('/api/browse_surah', methods=['POST'])
@@ -191,11 +191,12 @@ def query():
 def ahkam():
     data = request.json
     user_query = data.get('query', '')
-    
+    preferred_source = data.get('source', None)
     if not user_query:
-        return jsonify({'response': 'الرجاء إدخال سؤال أو رقم آية.'})
+        return jsonify({'response': 'الرجاء إدخال سؤال.'})
     
-    response = ahkam_bot.respond(user_query)
+    preferred_source = data.get('source', None)
+    response = ahkam_bot.respond(user_query, preferred_source)
     return jsonify({'response': response})
 
 @app.route('/api/get_surah_info', methods=['POST'])

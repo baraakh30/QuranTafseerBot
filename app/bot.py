@@ -423,16 +423,80 @@ class IslamicRulingsChatbot:
     def __init__(self):
         # Initialize the preprocessor
         self.preprocessor = ArabicTextPreprocessor()
-        csv_file_path = "app/static/data/binbaz.csv"
         
-        # Load the dataset
-        if os.path.exists(csv_file_path):
-            print("Loading dataset from CSV file...")
-            self.df = pd.read_csv(csv_file_path)
+        # Load the first dataset (binbaz)
+        binbaz_file_path = "app/static/data/binbaz.csv"
+        if os.path.exists(binbaz_file_path):
+            print("Loading Bin Baz dataset from CSV file...")
+            binbaz_df = pd.read_csv(binbaz_file_path)
+            # Add source column
+            binbaz_df['source'] = 'ابن باز'
+            # Standardize column names
+            binbaz_df = binbaz_df[['questions', 'answers', 'titles', 'source']]
         else:
-            raise FileNotFoundError(f"Dataset file {csv_file_path} not found.")
+            raise FileNotFoundError(f"Dataset file {binbaz_file_path} not found.")
         
-        self.df = self.df[['questions', 'answers', 'titles']]
+        # Check for previously saved IslamWeb dataset first
+        islamweb_save_path = "app/static/data/islamweb.csv"
+        
+        if os.path.exists(islamweb_save_path):
+            print("Loading previously saved IslamWeb dataset...")
+            islamweb_df = pd.read_csv(islamweb_save_path)
+            print(f"Loaded IslamWeb dataset with {len(islamweb_df)} rulings.")
+        else:
+            # If not available locally, download from Kaggle
+            try:
+                print("No local IslamWeb dataset found. Downloading from Kaggle...")
+                import kagglehub
+                import shutil
+                
+                # Download the dataset
+                kaggle_path = kagglehub.dataset_download("abdallahelsaadany/fatawa")
+                islamweb_file_path = os.path.join(kaggle_path, "88kData.csv")
+                
+                if os.path.exists(islamweb_file_path):
+                    islamweb_df = pd.read_csv(islamweb_file_path)
+                    # Rename columns to match our standardized format
+                    islamweb_df = islamweb_df.rename(columns={
+                        'title': 'titles',
+                        'ques': 'questions',
+                        'ans': 'answers'
+                    })
+                    # Add source column
+                    islamweb_df['source'] = 'IslamWeb'
+                    # Select only the columns we need
+                    islamweb_df = islamweb_df[['questions', 'answers', 'titles', 'source']]
+                    
+                    print(f"Downloaded IslamWeb dataset with {len(islamweb_df)} rulings.")
+                    
+                    # Save the IslamWeb dataset for future use
+                    os.makedirs(os.path.dirname(islamweb_save_path), exist_ok=True)
+                    islamweb_df.to_csv(islamweb_save_path, index=False)
+                    print(f"Saved IslamWeb dataset to {islamweb_save_path}")
+                    
+                    # Clean up downloaded files to save disk space
+                    try:
+                        if os.path.exists(kaggle_path) and os.path.isdir(kaggle_path):
+                            shutil.rmtree(os.path.dirname(kaggle_path))
+                            print(f"Removed temporary Kaggle download files from {os.path.dirname(kaggle_path)}")
+                    except Exception as cleanup_error:
+                        print(f"Warning: Could not remove temporary files: {cleanup_error}")
+                else:
+                    print("IslamWeb dataset file not found in Kaggle download. Using only Bin Baz dataset.")
+                    islamweb_df = pd.DataFrame(columns=['questions', 'answers', 'titles', 'source'])
+            except Exception as e:
+                print(f"Error downloading IslamWeb dataset: {e}")
+                print("Creating empty IslamWeb DataFrame.")
+                islamweb_df = pd.DataFrame(columns=['questions', 'answers', 'titles', 'source'])
+        
+        # Merge the datasets
+        print("Merging datasets...")
+        self.df = pd.concat([binbaz_df, islamweb_df], ignore_index=True)
+        print(f"Combined dataset has {len(self.df)} rulings.")
+        
+        # Get available sources
+        self.available_sources = self.df['source'].unique()
+        print(f"Available sources: {', '.join(self.available_sources)}")
         
         # Try to load saved TF-IDF models
         try:
@@ -463,6 +527,7 @@ class IslamicRulingsChatbot:
             self.tfidf_matrix_question = self.vectorizer_question.fit_transform(self.df['clean_question'])
             
             # Save the models
+            os.makedirs(os.path.dirname('app/static/models/islamic_rulings_model.pkl'), exist_ok=True)
             with open('app/static/models/islamic_rulings_model.pkl', 'wb') as model_file:
                 model_data = {
                     'vectorizer_title': self.vectorizer_title,
@@ -473,9 +538,9 @@ class IslamicRulingsChatbot:
                 pickle.dump(model_data, model_file)
                 print("Saved model to file.")
         
-        print(f"Chatbot initialized with {len(self.df)} Islamic rulings.")
+        print(f"Chatbot initialized with {len(self.df)} Islamic rulings from {len(self.available_sources)} sources.")
 
-    def search_rulings(self, query, top_n=5):
+    def search_rulings(self, query, preferred_source=None, top_n=5):
         # Clean the query
         clean_query = self.preprocessor.preprocess_for_search(query)
         
@@ -490,17 +555,25 @@ class IslamicRulingsChatbot:
         # Combine scores with weights (70% title, 30% question)
         combined_similarity = 0.7 * similarity_title + 0.3 * similarity_question
         
-        # Create a DataFrame with scores
+        # Create a DataFrame with scores and source information
         score_df = pd.DataFrame({
             'index': range(len(combined_similarity)),
-            'score': combined_similarity
+            'score': combined_similarity,
+            'source': self.df['source'].values
         })
         
         # Filter by similarity threshold
         score_df = score_df[score_df['score'] > 0.3]
         
+        # Filter by preferred source if specified
+        if preferred_source and preferred_source in self.available_sources:
+            score_df = score_df[score_df['source'] == preferred_source]
+        
         if len(score_df) == 0:
-            return "لم أجد أي فتوى تتعلق بسؤالك. يرجى إعادة صياغة السؤال أو توضيحه أكثر."
+            if preferred_source:
+                return f"لم أجد أي فتوى تتعلق بسؤالك في مصدر {preferred_source}. يرجى إعادة صياغة السؤال أو تجربة مصدر آخر."
+            else:
+                return "لم أجد أي فتوى تتعلق بسؤالك. يرجى إعادة صياغة السؤال أو توضيحه أكثر."
         
         # Sort and select top results
         score_df = score_df.sort_values('score', ascending=False).head(top_n)
@@ -513,6 +586,7 @@ class IslamicRulingsChatbot:
                 'title': self.df.iloc[idx]['titles'],
                 'question': self.df.iloc[idx]['questions'],
                 'answer': self.df.iloc[idx]['answers'],
+                'source': self.df.iloc[idx]['source'],
                 'similarity': row['score']
             })
         
@@ -523,20 +597,41 @@ class IslamicRulingsChatbot:
             return results
         response = ""
         for i, result in enumerate(results):
-            response += f"العنوان: {result['title']}\n\n"
-            if result['question'] and len(result['question']) > 10 and result['question'] != result['title']:
-                response += f"السؤال: {result['question']}\n\n"
-            response += f"الإجابة: {result['answer']}\n"
+            # Replace newlines with space in each field
+            title = result['title'].replace('\n', ' ')
+            question = result['question'].replace('\n', ' ') if result['question'] else ""
+            answer = result['answer'].replace('\n', ' ') if result['answer'] else ""
+            source = result['source'].replace('\n', ' ') if result['source'] else ""
+
+            response += f"العنوان: {title}\n\n"
+            if question and len(question) > 10 and question != title:
+                response += f"السؤال: {question}\n\n"
+            response += f"الإجابة: {answer}\n"
+            response += f"المصدر: {source}\n"
+            
             if i < len(results) - 1:
                 response += "\n---\n\n"
         return response
 
-    def respond(self, user_input):
+
+    def get_available_sources(self):
+        """Return a list of available fatwa sources"""
+        return list(self.available_sources)
+
+    def respond(self, user_input, preferred_source=None):
         if not user_input.strip():
             return "مرحباً بك في بوت الفتاوى الشرعية. يمكنك سؤالي عن أي حكم شرعي وسأحاول مساعدتك."
+        
         clean_input = user_input.lower().strip()
+        
         if clean_input == "خروج" or clean_input == "exit":
             return "جزاك الله خيراً لاستخدامك بوت الفتاوى. بارك الله فيك!"
+        
         if clean_input == "مرحبا" or clean_input == "hello":
             return "السلام عليكم! أنا بوت الفتاوى الشرعية. اسألني عن أي حكم شرعي وسأحاول مساعدتك."
-        return self.search_rulings(user_input)
+        
+        if clean_input == "المصادر" or clean_input == "sources":
+            sources = self.get_available_sources()
+            return f"مصادر الفتاوى المتاحة:\n" + "\n".join(sources)
+            
+        return self.search_rulings(user_input, preferred_source)

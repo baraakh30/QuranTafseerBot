@@ -1,3 +1,5 @@
 **/__pycache__/
 app/__pycache__/
 app/static/data/quran_tafseers_dataset.csv
+app/static/data/islamweb.csv
+app/static/models/islamic_rulings_model.pkl

@@ -23,7 +23,6 @@
         <!-- Quran Tafsir Tab -->
         <div id="quran-tab" class="tab-content active">
             <p class="subtitle">اسأل عن أي آية من القرآن الكريم وسأقدم لك تفسيرها</p>
-            
             <div id="source-selector">
                 <label for="tafseer-source">اختر مصدر التفسير:</label>
                 <select id="tafseer-source">
@@ -33,7 +32,6 @@
                     {% endfor %}
                 </select>
             </div>
-            
             <div class="chat-container-wrapper">
                 <div class="expand-button" id="expand-chat">⤢</div>
                 <div id="chat-container" class="chat-container"></div>
@@ -90,8 +88,16 @@
         
         <!-- Islamic Rulings Tab -->
         <div id="rulings-tab" class="tab-content">
-            <p class="subtitle">اسأل عن أي حكم شرعي وسأبحث لك في فتاوي ابن باز</p>
-            
+            <p class="subtitle">اسأل عن أي حكم شرعي وسأبحث لك في فتاوي العلماء</p>
+            <div  id= "source-selector2">
+                <label for="ruling-source">اختر مصدر التفسير:</label>
+                <select id="ruling-source">
+                    <option value="">كل المصادر</option>
+                    {% for source in r_sources %}
+                    <option value="{{ source }}">{{ source }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <div class="chat-container-wrapper">
                 <div class="expand-button" id="expand-rulings-chat">⤢</div>
                 <div id="rulings-chat-container" class="chat-container"></div>

@@ -364,7 +364,12 @@ button:focus::after {
     margin-top: 10px;
     animation: fadeIn 0.5s ease 0.1s both;
 }
-
+.ruling-source {
+    font-weight: bold;
+    color: #8e44ad;
+    margin-top: 10px;
+    animation: fadeIn 0.5s ease 0.1s both;
+}
 .tafseer-text {
     margin-top: 5px;
     line-height: 1.6;
@@ -1168,6 +1173,16 @@ button:focus::after {
         width: 100%;
         margin: 5px 0;
     }
+    #source-selector2 {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #source-selector2 select {
+        width: 100%;
+        margin: 5px 0;
+    }
     
     /* Chat container */
     .chat-container {
@@ -1283,7 +1298,9 @@ button:focus::after {
     .expanded-container #source-selector {
         padding: 10px 0;
     }
-    
+    .expanded-container #source-selector2 {
+        padding: 10px 0;
+    }
     .expanded-container .clear-chat-button {
         margin-right: 0;
         margin-top: 8px;
@@ -1850,4 +1867,8 @@ button:focus::after {
 
 .surah-browser .collapsible-tafseer.expanded .read-more {
     display: inline-block;
+}
+#source-selector2 {
+    margin-bottom: 20px;
+    transition: opacity 0.3s ease;
 }

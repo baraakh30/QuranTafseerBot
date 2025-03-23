@@ -1407,9 +1407,9 @@ function setupReadMoreListeners() {
         // Add the button to the container
         buttonContainer.appendChild(clearButton);
 
-        // Add the button container next to the source selector
+        // Add the button container AFTER the source selector (changed from 'insertBefore' to 'insertAfter')
         const sourceSelector = document.getElementById('source-selector');
-        sourceSelector.parentNode.insertBefore(buttonContainer, sourceSelector);
+        sourceSelector.parentNode.insertBefore(buttonContainer, sourceSelector.nextSibling);
 
         // Also add it to the expanded view when active
         document.addEventListener('click', function (e) {
@@ -1432,7 +1432,8 @@ function setupReadMoreListeners() {
                             expandedClearButton.id = 'clear-chat-button-expanded';
 
                             expandedButtonContainer.appendChild(expandedClearButton);
-                            expandedSourceSelector.parentNode.insertBefore(expandedButtonContainer, expandedSourceSelector);
+                            // Insert AFTER the expanded source selector
+                            expandedSourceSelector.parentNode.insertBefore(expandedButtonContainer, expandedSourceSelector.nextSibling);
 
                             // Add event listener to the expanded clear button
                             expandedClearButton.addEventListener('click', showClearConfirmation);
