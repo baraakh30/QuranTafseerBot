@@ -7,129 +7,13 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Initialize all mobile features if screen width is appropriate
     if (window.innerWidth <= 768) {
-        addMobileBottomNav();
         addMobileGestureSupport();
         addDoubleTapZoom();
         optimizeMobileKeyboard();
         optimizeMobilePerformance();
     }
 
-    // Add resize listener to initialize mobile features when appropriate
-    window.addEventListener('resize', function() {
-        if (window.innerWidth <= 768) {
-            // Only add features if they don't already exist
-            if (!document.querySelector('.mobile-bottom-nav')) {
-                addMobileBottomNav();
-            }
-        }
-    });
-
-    /**
-     * Creates bottom navigation for mobile devices
-     */
-    function addMobileBottomNav() {
-        // Only add for mobile devices
-        if (window.innerWidth <= 768) {
-            const nav = document.createElement('div');
-            nav.className = 'mobile-bottom-nav';
-
-            // Start with the default nav (for Quran tab which is active initially)
-            nav.innerHTML = `
-            <button id="mobile-chat-btn" aria-label="Chat">💬</button>
-            <button id="mobile-browse-btn" aria-label="Browse">📖</button>
-            <button id="mobile-sources-btn" aria-label="Sources">📚</button>
-            <button id="mobile-top-btn" aria-label="Scroll to top">⬆️</button>
-            `;
-
-            document.body.appendChild(nav);
-
-            // Add initial event listeners
-            document.getElementById('mobile-chat-btn').addEventListener('click', () => {
-                document.querySelector('.chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            document.getElementById('mobile-browse-btn').addEventListener('click', () => {
-                document.querySelector('.browse-container').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            document.getElementById('mobile-sources-btn').addEventListener('click', () => {
-                const userInput = document.getElementById('user-input');
-                userInput.value = "المصادر";
-                document.querySelector('.chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
-                // Call sendMessage from the main context
-                if (typeof sendMessage === 'function') {
-                    sendMessage();
-                }
-            });
-
-            document.getElementById('mobile-top-btn').addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-    }
-
-    /**
-     * Update mobile bottom nav based on active tab
-     */
-    function updateMobileBottomNavForCurrentTab() {
-        const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
-        if (!mobileBottomNav || window.innerWidth > 768) return;
-
-        // Check which tab is currently active
-        const isRulingsTabActive = document.getElementById('rulings-tab') && 
-            document.getElementById('rulings-tab').classList.contains('active');
-
-        if (isRulingsTabActive) {
-            // Keep only chat and top buttons for rulings tab
-            mobileBottomNav.innerHTML = `
-            <button id="mobile-chat-btn" aria-label="Chat">💬</button>
-            <button id="mobile-top-btn" aria-label="Scroll to top">⬆️</button>
-            `;
-
-            // Add event listeners for rulings chat
-            document.getElementById('mobile-chat-btn').addEventListener('click', () => {
-                document.querySelector('#rulings-tab .chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            document.getElementById('mobile-top-btn').addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        } else {
-            // Restore full nav for Quran tab
-            mobileBottomNav.innerHTML = `
-            <button id="mobile-chat-btn" aria-label="Chat">💬</button>
-            <button id="mobile-browse-btn" aria-label="Browse">📖</button>
-            <button id="mobile-sources-btn" aria-label="Sources">📚</button>
-            <button id="mobile-top-btn" aria-label="Scroll to top">⬆️</button>
-            `;
-
-            // Add event listeners for Quran tab
-            const userInput = document.getElementById('user-input');
-            
-            document.getElementById('mobile-chat-btn').addEventListener('click', () => {
-                document.querySelector('.chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            document.getElementById('mobile-browse-btn').addEventListener('click', () => {
-                document.querySelector('.browse-container').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            document.getElementById('mobile-sources-btn').addEventListener('click', () => {
-                if (userInput) {
-                    userInput.value = "المصادر";
-                    document.querySelector('.chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
-                    // Call sendMessage from the main context
-                    if (typeof sendMessage === 'function') {
-                        sendMessage();
-                    }
-                }
-            });
-
-            document.getElementById('mobile-top-btn').addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-    }
+  
     
     /**
      * Add swipe gesture support for mobile devices
@@ -442,12 +326,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Export mobile-related functions for global access
     window.mobileUtils = {
-        addMobileBottomNav,
         addMobileGestureSupport,
         addDoubleTapZoom,
         optimizeMobileKeyboard,
         optimizeMobilePerformance,
-        updateMobileBottomNavForCurrentTab,
         optimizeRulingsMobileKeyboard,
         addRulingsDoubleTapZoom
     };

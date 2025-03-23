@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.createConfirmDialog = createConfirmDialog;
     window.addDoubleTapZoom = addDoubleTapZoom;
     window.openTab = openTab;
-    window.updateMobileBottomNavForCurrentTab = updateMobileBottomNavForCurrentTab;
 
     // Initialize tabs if they exist
     const tabButtons = document.querySelectorAll('.tab-button');
@@ -175,6 +174,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return formattedResponse;
     }
 
+    window.addEventListener('resize', function() {
+        if (window.innerWidth <= 768) {
+            // Only add features if they don't already exist
+            if (!document.querySelector('.mobile-bottom-nav')) {
+                addMobileBottomNav();
+            }
+        }
+    });
+
     // Mobile bottom navigation
     function addMobileBottomNav() {
         // Only add for mobile devices
@@ -214,63 +222,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
-
-    // Update mobile bottom nav based on active tab
-    function updateMobileBottomNavForCurrentTab() {
-        const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
-        if (!mobileBottomNav || window.innerWidth > 768) return;
-
-        // Check which tab is currently active
-        const isRulingsTabActive = document.getElementById('rulings-tab') && 
-                                  document.getElementById('rulings-tab').classList.contains('active');
-
-        if (isRulingsTabActive) {
-            // Keep only chat and top buttons for rulings tab
-            mobileBottomNav.innerHTML = `
-            <button id="mobile-chat-btn" aria-label="Chat">💬</button>
-            <button id="mobile-top-btn" aria-label="Scroll to top">⬆️</button>
-            `;
-
-            // Add event listeners for rulings chat
-            document.getElementById('mobile-chat-btn').addEventListener('click', () => {
-                document.querySelector('#rulings-tab .chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            document.getElementById('mobile-top-btn').addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        } else {
-            // Restore full nav for Quran tab
-            mobileBottomNav.innerHTML = `
-            <button id="mobile-chat-btn" aria-label="Chat">💬</button>
-            <button id="mobile-browse-btn" aria-label="Browse">📖</button>
-            <button id="mobile-sources-btn" aria-label="Sources">📚</button>
-            <button id="mobile-top-btn" aria-label="Scroll to top">⬆️</button>
-            `;
-
-            // Add event listeners for Quran tab
-            document.getElementById('mobile-chat-btn').addEventListener('click', () => {
-                document.querySelector('.chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            document.getElementById('mobile-browse-btn').addEventListener('click', () => {
-                document.querySelector('.browse-container').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            document.getElementById('mobile-sources-btn').addEventListener('click', () => {
-                document.getElementById('user-input').value = "المصادر";
-                document.querySelector('.chat-container-wrapper').scrollIntoView({ behavior: 'smooth' });
-                if (typeof window.sendMessage === 'function') {
-                    window.sendMessage();
-                }
-            });
-
-            document.getElementById('mobile-top-btn').addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-    }
-
     // Tab functionality
     function initializeTabs() {
         // Set up tab functionality
@@ -293,51 +244,100 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Tab switching function
-    function openTab(evt, tabName) {
-        // Declare all variables
-        let i, tabcontent, tabbuttons;
+function openTab(evt, tabName) {
+    // Declare all variables
+    let i, tabcontent, tabbuttons;
 
-        // Get all elements with class="tab-content" and hide them
-        tabcontent = document.getElementsByClassName("tab-content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].classList.remove("active");
-        }
+    // Get all elements with class="tab-content" and hide them
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove("active");
+    }
 
-        // Get all elements with class="tab-button" and remove the class "active"
-        tabbuttons = document.getElementsByClassName("tab-button");
-        for (i = 0; i < tabbuttons.length; i++) {
-            tabbuttons[i].classList.remove("active");
-        }
+    // Get all elements with class="tab-button" and remove the class "active"
+    tabbuttons = document.getElementsByClassName("tab-button");
+    for (i = 0; i < tabbuttons.length; i++) {
+        tabbuttons[i].classList.remove("active");
+    }
 
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(tabName).classList.add("active");
-        evt.currentTarget.classList.add("active");
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
 
-        // Update the mobile bottom nav based on the current tab
-        updateMobileBottomNavForCurrentTab();
+    // Update mobile navigation for the current tab
+    if (window.innerWidth <= 768) {
+        const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
+        if (mobileBottomNav) {
+            if (tabName === 'rulings-tab') {
+                // Keep only chat and top buttons for rulings tab
+                mobileBottomNav.innerHTML = `
+                <button id="mobile-chat-btn" aria-label="Chat">💬</button>
+                <button id="mobile-top-btn" aria-label="Scroll to top">⬆️</button>
+                `;
 
-        // Special handling for tab-specific elements
-        if (tabName === 'rulings-tab') {
-            // Show test alert when switching to rulings tab
-            showTestAlert();
+                // Re-add event listeners for rulings tab
+                document.getElementById('mobile-chat-btn')?.addEventListener('click', () => {
+                    document.querySelector('#rulings-tab .chat-container-wrapper')?.scrollIntoView({ behavior: 'smooth' });
+                });
+            } else {
+                // Default nav for Quran tab
+                mobileBottomNav.innerHTML = `
+                <button id="mobile-chat-btn" aria-label="Chat">💬</button>
+                <button id="mobile-browse-btn" aria-label="Browse">📖</button>
+                <button id="mobile-sources-btn" aria-label="Sources">📚</button>
+                <button id="mobile-top-btn" aria-label="Scroll to top">⬆️</button>
+                `;
 
-            // Make sure rulings chat container scrolls to bottom when tab is opened
-            const rulingsChatContainer = document.getElementById('rulings-chat-container');
-            if (rulingsChatContainer) {
-                setTimeout(() => {
-                    rulingsChatContainer.scrollTop = rulingsChatContainer.scrollHeight;
-                }, 100);
+                // Re-add event listeners for Quran tab
+                document.getElementById('mobile-chat-btn')?.addEventListener('click', () => {
+                    document.querySelector('.chat-container-wrapper')?.scrollIntoView({ behavior: 'smooth' });
+                });
+
+                document.getElementById('mobile-browse-btn')?.addEventListener('click', () => {
+                    document.querySelector('.browse-container')?.scrollIntoView({ behavior: 'smooth' });
+                });
+
+                document.getElementById('mobile-sources-btn')?.addEventListener('click', () => {
+                    const userInput = document.getElementById('user-input');
+                    if (userInput) {
+                        userInput.value = "المصادر";
+                        document.querySelector('.chat-container-wrapper')?.scrollIntoView({ behavior: 'smooth' });
+                        if (typeof window.sendMessage === 'function') {
+                            window.sendMessage();
+                        }
+                    }
+                });
             }
-        } else if (tabName === 'quran-tab') {
-            // Similar handling for Quran tab if needed
-            const chatContainer = document.getElementById('chat-container');
-            if (chatContainer) {
-                setTimeout(() => {
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                }, 100);
-            }
+
+            // Common top button for both tabs
+            document.getElementById('mobile-top-btn')?.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         }
     }
+
+    // Special handling for tab-specific elements
+    if (tabName === 'rulings-tab') {
+        // Show test alert when switching to rulings tab
+        showTestAlert();
+
+        // Make sure rulings chat container scrolls to bottom when tab is opened
+        const rulingsChatContainer = document.getElementById('rulings-chat-container');
+        if (rulingsChatContainer) {
+            setTimeout(() => {
+                rulingsChatContainer.scrollTop = rulingsChatContainer.scrollHeight;
+            }, 100);
+        }
+    } else if (tabName === 'quran-tab') {
+        // Similar handling for Quran tab if needed
+        const chatContainer = document.getElementById('chat-container');
+        if (chatContainer) {
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 100);
+        }
+    }
+}
 
     // Function to show a floating test alert for rulings tab
     function showTestAlert() {
